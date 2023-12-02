@@ -34,7 +34,7 @@ void main()                                                          \n\
 }";
 
 
-void CreateTriabgle() 
+void CreateTriangle() 
 {
     GLfloat vertices[] = {
         -1.0f, -1.0f, 0.0f,
@@ -126,6 +126,10 @@ void CompileShaders()
 
 }
 
+void init_opengl() {
+
+}
+
 int main() 
 {
 
@@ -180,7 +184,7 @@ int main()
     // Setup Viewport Size
     glViewport(0, 0, bufferWidth, bufferHeight);
 
-    CreateTriabgle();
+    CreateTriangle();
     CompileShaders();
 
     // Loop until window close
