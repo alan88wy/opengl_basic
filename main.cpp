@@ -13,8 +13,6 @@
 #include <GLM/gtc/matrix_transform.hpp> // glm::translate, glm::rotate, glm::scale, glm::perspective
 #include <GLM/gtc/type_ptr.hpp>
 
-
-
 // Window Dimentions
 const GLint WIDTH = 800, HEIGHT = 600;
 const float toRadians = M_PI / 180.0f; // convert to radian 3.14159265f
@@ -24,23 +22,28 @@ GLuint VAO, VBO, shader, uniformModel;
 bool direction = true;
 float triOffset = 0.0f;
 float triMaxOffset = 0.7f;
-float triIncrement = 0.0007f;
+float triIncrement = 0.0002f;
 
 float curAngle = 0.0f;
+
+bool sizeDirection = true;
+float curSize = 0.4f;
+float maxSize = 0.8f;
+float minSize = 0.1f;
 
 // Create Shader. Normally, you create in external file
 
 // Vertex Shader
-static const char* vShader = "                                               \n\
-#version 410                                                                 \n\
-                                                                             \n\
-layout (location = 0) in vec3 pos;                                           \n\
-                                                                             \n\
-uniform mat4 model;                                                          \n\
-                                                                             \n\
-void main()                                                                  \n\
-{                                                                            \n\
-     gl_Position = model * vec4(0.4 * pos.x, 0.4 * pos.y, pos.z, 1.0);       \n\
+static const char* vShader = "                                       \n\
+#version 410                                                         \n\
+                                                                     \n\
+layout (location = 0) in vec3 pos;                                   \n\
+                                                                     \n\
+uniform mat4 model;                                                  \n\
+                                                                     \n\
+void main()                                                          \n\
+{                                                                    \n\
+     gl_Position = model * vec4(pos, 1.0);                           \n\
 }";
 
 
@@ -247,6 +250,18 @@ int main()
             curAngle -= 360;
         }
 
+        // if (sizeDirection) {
+        if (sizeDirection) {
+            curSize += 0.0001f;
+        }
+        else {
+            curSize -= 0.0001f;
+        }
+
+        if (curSize >= maxSize || curSize <= minSize) {
+            sizeDirection = !sizeDirection;
+        }
+
         // clear window
         glClearColor(0.0f, 0.0f, 0.0f, 1.0f);  // no divide by 256. RGB Color (r, g, b) plus transparancy
         glClear(GL_COLOR_BUFFER_BIT);  // Clear all colors;
@@ -260,8 +275,13 @@ int main()
         glm::mat4 model = glm::mat4(1.0f);
         
         // order is important
+        // model = glm::scale(model, glm::vec3(curSize, curSize, 1.0f)); // currently, this will go beyond window
         model = glm::translate(model, glm::vec3(triOffset, 0.0f, 0.0f));  // We only translate x value with triOffset
-        model = glm::rotate(model, curAngle * toRadians, glm::vec3(0.0f, 0.0f, 1.0f)); // Rotate along y axis
+        // model = glm::rotate(model, curAngle * toRadians, glm::vec3(0.0f, 0.0f, 1.0f)); // Rotate along y axis
+
+        // scalling
+        model = glm::scale(model, glm::vec3(curSize, 0.4f, 1.0f)); // currently, this will go beyond window
+        // if we put translate here, it will not do that.
 
         // void glUniform1f(GLint location, GLfloat v0); v0 = triOffset
         glUniform1f(uniformModel, triOffset);  // Specify the value of a uniform variable for the current program object
