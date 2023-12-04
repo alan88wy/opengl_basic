@@ -2,23 +2,32 @@
 #include <string.h>
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
+#include <stdlib.h>
+#include <cmath>
 
 // Window Dimentions
 const GLint WIDTH = 800, HEIGHT = 600;
 
-GLuint VAO, VBO, shader;
+GLuint VAO, VBO, shader, uniformXMove;
+
+bool direction = true;
+float triOffset = 0.0f;
+float triMaxOffset = 0.7f;
+float triIncrement = 0.0005f;
 
 // Create Shader. Normally, you create in external file
 
 // Vertex Shader
-static const char* vShader = "                                       \n\
-#version 410                                                         \n\
-                                                                     \n\
-layout (location = 0) in vec3 pos;                                   \n\
-                                                                     \n\
-void main()                                                          \n\
-{                                                                    \n\
-     gl_Position = vec4(0.6 * pos.x, 0.6 * pos.y, pos.z, 1.0);       \n\
+static const char* vShader = "                                               \n\
+#version 410                                                                 \n\
+                                                                             \n\
+layout (location = 0) in vec3 pos;                                           \n\
+                                                                             \n\
+uniform float xMove;                                                         \n\
+                                                                             \n\
+void main()                                                                  \n\
+{                                                                            \n\
+     gl_Position = vec4(0.6 * pos.x + xMove, 0.6 * pos.y, pos.z, 1.0);       \n\
 }";
 
 
@@ -124,6 +133,8 @@ void CompileShaders()
         return;
     }
 
+    uniformXMove = glGetUniformLocation(shader, "xMove");
+
 }
 
 void init_opengl() {
@@ -194,12 +205,24 @@ int main()
         // Get & Handle user input events
         glfwPollEvents();
 
+        if (direction) {
+            triOffset += triIncrement;
+        }
+        else {
+            triOffset -= triIncrement;
+        }
+
+        if (abs(triOffset) >= triMaxOffset) {
+            direction = !direction;
+        }
 
         // clear window
         glClearColor(0.0f, 0.0f, 0.0f, 1.0f);  // no divide by 256. RGB Color (r, g, b) plus transparancy
         glClear(GL_COLOR_BUFFER_BIT);  // Clear all colors;
 
         glUseProgram(shader);
+
+        glUniform1f(uniformXMove, triOffset);
 
         glBindVertexArray(VAO);
 
