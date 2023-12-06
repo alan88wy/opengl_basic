@@ -41,27 +41,21 @@ layout (location = 0) in vec3 pos;                                   \n\
                                                                      \n\
 uniform mat4 model;                                                  \n\
                                                                      \n\
-out vec4 vCol;                                                       \n\
-                                                                     \n\
 void main()                                                          \n\
 {                                                                    \n\
      gl_Position = model * vec4(pos, 1.0);                           \n\
-     vCol = vec4(clamp(pos, 0.0f, 1.0f), 1.0f);                      \n\
-                                                                     \n\
 }";
 
 
-// Fragment Shader - handle each picture
+// Fragment Shader
 static const char* fShader = "                                       \n\
 #version 410                                                         \n\
-                                                                     \n\
-in vec4 vCol;                                                        \n\
                                                                      \n\
 out vec4 colour;                                                     \n\
                                                                      \n\
 void main()                                                          \n\
 {                                                                    \n\
-     colour = vCol;                                                  \n\
+     colour = vec4(1.0, 0.0, 0.0, 1.0);                              \n\
 }";
 
 
@@ -282,11 +276,11 @@ int main()
         
         // order is important
         // model = glm::scale(model, glm::vec3(curSize, curSize, 1.0f)); // currently, this will go beyond window
-        // model = glm::translate(model, glm::vec3(triOffset, 0.0f, 0.0f));  // We only translate x value with triOffset
+        model = glm::translate(model, glm::vec3(triOffset, 0.0f, 0.0f));  // We only translate x value with triOffset
         // model = glm::rotate(model, curAngle * toRadians, glm::vec3(0.0f, 0.0f, 1.0f)); // Rotate along y axis
 
         // scalling
-        model = glm::scale(model, glm::vec3(0.4f, 0.4f, 1.0f)); // currently, this will go beyond window
+        model = glm::scale(model, glm::vec3(curSize, 0.4f, 1.0f)); // currently, this will go beyond window
         // if we put translate here, it will not do that.
 
         // void glUniform1f(GLint location, GLfloat v0); v0 = triOffset
