@@ -17,7 +17,7 @@
 const GLint WIDTH = 800, HEIGHT = 600;
 const float toRadians = M_PI / 180.0f; // convert to radian 3.14159265f
 
-GLuint VAO, VBO, shader, uniformModel;
+GLuint VAO, VBO, IBO, shader, uniformModel;
 
 bool direction = true;
 float triOffset = 0.0f;
@@ -67,8 +67,16 @@ void main()                                                          \n\
 
 void CreateTriangle() 
 {
+    unsigned int indices[] = {
+        0, 3, 1,
+        1, 3, 2,
+        2, 3, 0,
+        0, 1, 2
+    };
+
     GLfloat vertices[] = {
         -1.0f, -1.0f, 0.0f,
+        0.0f, -1.0f, 1.0f,
         1.0f, -1.0f, 0.0f,
         0.0f, 1.0f, 0.0f
     };
@@ -81,6 +89,11 @@ void CreateTriangle()
 
     glGenVertexArrays(1, &VAO);  // glGenVertexArrays(GLsizei n, GLuint* arrays); generate vertex array object names
     glBindVertexArray(VAO);      // bind a vertex array object
+
+    glGenBuffers(1, &IBO);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, IBO);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
+
 
     glGenBuffers(1, &VBO);       // glGenBuffers(GLsizei n, GLuint* buffers); generate buffer object names
     glBindBuffer(GL_ARRAY_BUFFER, VBO); // glBindBuffer(GLenum target, GLuint buffer); bind a named buffer object
@@ -95,6 +108,8 @@ void CreateTriangle()
     glEnableVertexAttribArray(0); // void glEnableVertexAttribArray(GLuint index); Enable or disable generic vertex attribute array
 
     glBindBuffer(GL_ARRAY_BUFFER, 0); // Unbind the buffer because we set it to 0
+
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 
     glBindVertexArray(0);  // Remove after use. Unbind the buffer because we set it to 0
 }
@@ -170,10 +185,6 @@ void CompileShaders()
 
 }
 
-void init_opengl() {
-
-}
-
 int main() 
 {
 
@@ -226,6 +237,9 @@ int main()
         return 1;
     }
 
+    // Enable Depth test
+    glEnable(GL_DEPTH_TEST);
+
     // Setup Viewport Size
     glViewport(0, 0, bufferWidth, bufferHeight);
 
@@ -270,7 +284,7 @@ int main()
 
         // clear window
         glClearColor(0.0f, 0.0f, 0.0f, 1.0f);  // no divide by 256. RGB Color (r, g, b) plus transparancy
-        glClear(GL_COLOR_BUFFER_BIT);  // Clear all colors;
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);  // Clear all colors;
 
         glUseProgram(shader);
 
@@ -284,6 +298,7 @@ int main()
         // model = glm::scale(model, glm::vec3(curSize, curSize, 1.0f)); // currently, this will go beyond window
         // model = glm::translate(model, glm::vec3(triOffset, 0.0f, 0.0f));  // We only translate x value with triOffset
         // model = glm::rotate(model, curAngle * toRadians, glm::vec3(0.0f, 0.0f, 1.0f)); // Rotate along y axis
+        model = glm::rotate(model, curAngle * toRadians, glm::vec3(0.0f, 1.0f, 0.0f)); // Rotate along y axis
 
         // scalling
         model = glm::scale(model, glm::vec3(0.4f, 0.4f, 1.0f)); // currently, this will go beyond window
@@ -298,7 +313,11 @@ int main()
 
         glBindVertexArray(VAO);
 
-        glDrawArrays(GL_TRIANGLES, 0, 3);
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, IBO);
+
+        glDrawElements(GL_TRIANGLES, 12, GL_UNSIGNED_INT, 0);
+
+        // glDrawArrays(GL_TRIANGLES, 0, 3);
 
         glBindVertexArray(0);
         
