@@ -14,8 +14,8 @@ class Window
 
 		int Initialise();
 
-		const GLint getBufferWidth() { return bufferWidth; }
-		const GLint getBufferHeight() { return bufferHeight; }
+		GLint getBufferWidth() const { return bufferWidth; }
+		GLint getBufferHeight() const { return bufferHeight; }
 
 		bool getShouldClose() { return glfwWindowShouldClose(mainWindow); }
 
@@ -26,6 +26,6 @@ class Window
 	private:
 		GLFWwindow* mainWindow;
 
-		GLint width{}, height{};
-		GLint bufferWidth{}, bufferHeight{};
+		GLint width, height;
+		GLint bufferWidth, bufferHeight;
 };

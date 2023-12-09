@@ -41,7 +41,7 @@ static const char* vShader = "Shaders/shader.vert";
 // Fragment Shader
 static const char* fShader = "Shaders/shader.frag";
 
-void CreateObjects() 
+static void CreateObjects() 
 {
     unsigned int indices[] = {
         0, 3, 1,
@@ -70,7 +70,7 @@ void CreateObjects()
     meshList.push_back(obj2);
 }
 
-void CreateShaders()
+static void CreateShaders()
 {
     Shader* shader1 = new Shader();
     shader1->CreateFromFiles(vShader, fShader);

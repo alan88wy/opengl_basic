@@ -1,7 +1,7 @@
 #include "Mesh.h"
 
 Mesh::Mesh() {
-	VBO = 0;
+	VAO = 0;
 	VBO = 0;
 	IBO = 0;
 	indexCount = 0;

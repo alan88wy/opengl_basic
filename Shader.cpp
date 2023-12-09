@@ -61,6 +61,7 @@ void Shader::CompileShader(const char* vertexCode, const char* fragmentCode)
 
 	glLinkProgram(shaderID);
 	glGetProgramiv(shaderID, GL_LINK_STATUS, &result);
+
 	if (!result)
 	{
 		glGetProgramInfoLog(shaderID, sizeof(eLog), NULL, eLog);
@@ -70,6 +71,7 @@ void Shader::CompileShader(const char* vertexCode, const char* fragmentCode)
 
 	glValidateProgram(shaderID);
 	glGetProgramiv(shaderID, GL_VALIDATE_STATUS, &result);
+
 	if (!result)
 	{
 		glGetProgramInfoLog(shaderID, sizeof(eLog), NULL, eLog);
@@ -81,12 +83,12 @@ void Shader::CompileShader(const char* vertexCode, const char* fragmentCode)
 	uniformModel = glGetUniformLocation(shaderID, "model");
 }
 
-GLuint Shader::GetProjectionLocation()
+GLuint Shader::GetProjectionLocation() const
 {
 	return uniformProjection;
 }
 
-GLuint Shader::GetModelLocation()
+GLuint Shader::GetModelLocation() const
 {
 	return uniformModel;
 }
@@ -128,6 +130,7 @@ void Shader::AddShader(GLuint theProgram, const char* shaderCode, GLenum shaderT
 	GLchar eLog[1024] = { 0 };
 
 	glGetShaderiv(theShader, GL_COMPILE_STATUS, &result);
+
 	if (!result)
 	{
 		glGetShaderInfoLog(theShader, sizeof(eLog), NULL, eLog);
