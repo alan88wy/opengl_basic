@@ -30,7 +30,7 @@ float curSize = 0.4f;
 float maxSize = 0.8f;
 float minSize = 0.1f;
 
-Window mainWindow;
+// Window mainWindow;
 
 std::vector<Mesh*> meshList;
 std::vector<Shader> shaderList;
@@ -79,8 +79,8 @@ static void CreateShaders()
 
 int main() 
 {
-    mainWindow = Window(800, 600);
-    mainWindow.Initialise();
+    Window mainWindow = Window(800, 600);
+    // mainWindow.Initialise();
 
     CreateObjects();
     CreateShaders();

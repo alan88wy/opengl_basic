@@ -4,13 +4,14 @@ Window::Window()
 {
 	width = 800;
 	height = 600;
+	Initialise();
 }
 
 Window::Window(GLint windowWidth, GLint windowHeight)
 {
 	width = windowWidth;
 	height = windowHeight;
-
+	Initialise();
 }
 
 int Window::Initialise()
