@@ -19,6 +19,11 @@ class Window
 
 		bool getShouldClose() { return glfwWindowShouldClose(mainWindow); }
 
+		bool* getKeys() { return keys; };
+
+		GLfloat getXChange();
+		GLfloat getYChange();
+
 		void swapBuffers() { glfwSwapBuffers(mainWindow); }
 
 		~Window();
@@ -28,4 +33,18 @@ class Window
 
 		GLint width, height;
 		GLint bufferWidth, bufferHeight;
+
+		bool keys[1024]; // 1024 to cover the range of ASCII character. Set true when key is press.
+
+		GLfloat lastX;
+		GLfloat lastY;
+		GLfloat xChange;
+		GLfloat yChange;
+		bool mouseFirstMoved; // for first mouse move to set lastX and lastY
+
+		void createCallbacks();
+
+		static void handleKeys(GLFWwindow* window, int key, int code, int action, int mode);
+		static void handleMouse(GLFWwindow* window, double xPos, double yPos);
+
 };

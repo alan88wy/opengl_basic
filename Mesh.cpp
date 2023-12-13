@@ -1,13 +1,15 @@
 #include "Mesh.h"
 
-Mesh::Mesh() {
+Mesh::Mesh() 
+{
 	VAO = 0;
 	VBO = 0;
 	IBO = 0;
 	indexCount = 0;
 }
 
-void Mesh::CreateMesh(GLfloat* vertices, unsigned int* indices, unsigned int noOfVertices, unsigned int noOfIndices) {
+void Mesh::CreateMesh(GLfloat* vertices, unsigned int* indices, unsigned int noOfVertices, unsigned int noOfIndices) 
+{
 
     indexCount = noOfIndices;
 
@@ -38,7 +40,8 @@ void Mesh::CreateMesh(GLfloat* vertices, unsigned int* indices, unsigned int noO
     glBindVertexArray(0);  // Remove after use. Unbind the buffer because we set it to 0
 };
 
-void Mesh::RenderMesh() {
+void Mesh::RenderMesh() 
+{
 
     //if (VAO |= 0 && VBO != 0 && IBO != 0) {
 
@@ -54,7 +57,8 @@ void Mesh::RenderMesh() {
     //}
 };
 
-void Mesh::ClearMesh() {
+void Mesh::ClearMesh() 
+{
 
     if (IBO != 0) {
         glDeleteBuffers(1, &IBO);
@@ -74,6 +78,7 @@ void Mesh::ClearMesh() {
     indexCount = 0;
 };
 
-Mesh::~Mesh() {
+Mesh::~Mesh() 
+{
     ClearMesh();
 };
