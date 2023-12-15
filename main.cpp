@@ -89,7 +89,7 @@ int main()
     CreateObjects();
     CreateShaders();
     
-    Camera camera = Camera(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f), -90.0f, 0.0f, 0.1f, 1.0f);
+    Camera camera = Camera(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f), -90.0f, 0.0f, 3.0f, 1.0f);
 
     GLuint uniformProjection = 0, uniformModel = 0, uniformView = 0;
 
@@ -101,7 +101,7 @@ int main()
     {
         GLfloat now = glfwGetTime();  // for SDL, SDL_GetPerformnceCounter();
         deltaTime = now - lastTime;   // for SDL, (now - lasttime)*1000/SDL_GetPerformanceFrequency() 
-
+        lastTime = now;
 
         // Get & Handle user input events
         glfwPollEvents();
