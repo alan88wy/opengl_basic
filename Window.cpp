@@ -65,7 +65,7 @@ int Window::Initialise()
 	// We need to press ESCAPE key.
 
 	// disable mouse
-	//glfwSetInputMode(mainWindow, GLFW_CURSOR, GLFW_CURSOR_DISABLED);  
+	glfwSetInputMode(mainWindow, GLFW_CURSOR, GLFW_CURSOR_DISABLED);  
 
 	// Allow modern extension access
 	glewExperimental = GL_TRUE;
