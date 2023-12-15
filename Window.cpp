@@ -64,7 +64,8 @@ int Window::Initialise()
 	// Lock cursor to screen. With this we cannote prexx the top right X button to close. 
 	// We need to press ESCAPE key.
 
-	glfwSetInputMode(mainWindow, GLFW_CURSOR, GLFW_CURSOR_DISABLED);  
+	// disable mouse
+	//glfwSetInputMode(mainWindow, GLFW_CURSOR, GLFW_CURSOR_DISABLED);  
 
 	// Allow modern extension access
 	glewExperimental = GL_TRUE;

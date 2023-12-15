@@ -15,6 +15,7 @@
 #include "Window.h"
 #include "Mesh.h"
 #include "Shader.h"
+#include "Camera.h"
 
 const float toRadians = 3.14159265f / 180.0f; // M_PI
 
@@ -34,6 +35,9 @@ float minSize = 0.1f;
 
 std::vector<Mesh*> meshList;
 std::vector<Shader> shaderList;
+
+GLfloat deltaTime = 0.0f;
+GLfloat lastTime = 0.0f;
 
 // Vertex Shader
 static const char* vShader = "Shaders/shader.vert";
@@ -84,17 +88,26 @@ int main()
 
     CreateObjects();
     CreateShaders();
+    
+    Camera camera = Camera(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f), -90.0f, 0.0f, 0.1f, 1.0f);
 
-    GLuint uniformProjection = 0, uniformModel = 0;
+    GLuint uniformProjection = 0, uniformModel = 0, uniformView = 0;
 
     // Create projection variable
     glm::mat4 projection = glm::perspective(45.0f, (GLfloat)mainWindow.getBufferWidth() / mainWindow.getBufferHeight(), 0.1f, 100.0f); // (y, aspect, near, far
 
     // Loop until window close
-    while (!mainWindow.getShouldClose()) {
+    while (!mainWindow.getShouldClose()) 
+    {
+        GLfloat now = glfwGetTime();  // for SDL, SDL_GetPerformnceCounter();
+        deltaTime = now - lastTime;   // for SDL, (now - lasttime)*1000/SDL_GetPerformanceFrequency() 
+
 
         // Get & Handle user input events
         glfwPollEvents();
+
+        // Managing key press
+        camera.keyControl(mainWindow.getKeys(), deltaTime);
 
         if (direction) {
             triOffset += triIncrement;
@@ -134,14 +147,16 @@ int main()
 
         uniformModel = shaderList[0].GetModelLocation();
         uniformProjection = shaderList[0].GetProjectionLocation();
+        uniformView = shaderList[0].GetViewLocation();
 
         // glm::mat4 model(1.0f);  Or alternatively : glm::mat4 model = glm::mat4(1.0f);
 
         glm::mat4 model = glm::mat4(1.0f);
         
         // order is important
-        model = glm::translate(model, glm::vec3(0.0f, triOffset, -2.5f));  // We only translate x value with triOffset
-  
+        // model = glm::translate(model, glm::vec3(0.0f, triOffset, -2.5f));  // We only translate x value with triOffset
+        model = glm::translate(model, glm::vec3(0.0f, 0.0f, -2.5f));  // We only translate x value with triOffset
+
         // model = glm::rotate(model, curAngle * toRadians, glm::vec3(0.0f, 1.0f, 0.0f)); // Rotate along y axis
         // scaling
         model = glm::scale(model, glm::vec3(0.4f, 0.4f, 1.0f)); // currently, this will go beyond window
@@ -150,12 +165,14 @@ int main()
         // void glUniformMatrix4fv(GLint location, GLsizei count, GLboolean transpose, const GLfloat * value);
         glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
         glUniformMatrix4fv(uniformProjection, 1, GL_FALSE, glm::value_ptr(projection));
+        glUniformMatrix4fv(uniformView, 1, GL_FALSE, glm::value_ptr(camera.calculateViewMatrix()));
 
         meshList[0]->RenderMesh();
 
         // Obj2
         model = glm::mat4(1.0f);
-        model = glm::translate(model, glm::vec3(triOffset, 0.0f, -2.5f));  // We only translate x value with triOffset
+        // model = glm::translate(model, glm::vec3(triOffset, 0.0f, -2.5f));  // We only translate x value with triOffset
+        model = glm::translate(model, glm::vec3(0.0f, 1.0f, -2.5f));  // We only translate x value with triOffset
        // model = glm::rotate(model, curAngle * toRadians, glm::vec3(1.0f, 0.0f, 0.0f)); // Rotate along y axis
         model = glm::scale(model, glm::vec3(0.4f, 0.4f, 1.0f)); // currently, this will go beyond window
         glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
