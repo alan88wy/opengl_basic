@@ -4,6 +4,7 @@ Window::Window()
 {
 	width = 800;
 	height = 600;
+
 	xChange = 0.0f;
 	yChange = 0.0f;
 
@@ -18,6 +19,7 @@ Window::Window(GLint windowWidth, GLint windowHeight)
 {
 	width = windowWidth;
 	height = windowHeight;
+
 	xChange = 0.0f;
 	yChange = 0.0f;
 
@@ -128,7 +130,7 @@ void Window::handleKeys(GLFWwindow* window, int key, int code, int action, int m
 	}
 }
 
-void Window::handleMouse(GLFWwindow* window, double xPos, double yPos) 
+void Window::handleMouse(GLFWwindow* window, double xPos, double yPos)
 {
 
 	Window* theWindow = static_cast<Window*>(glfwGetWindowUserPointer(window)); // Get the user pointer which is "this" above

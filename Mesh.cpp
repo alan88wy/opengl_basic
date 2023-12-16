@@ -30,8 +30,10 @@ void Mesh::CreateMesh(GLfloat* vertices, unsigned int* indices, unsigned int noO
 
     // void glVertexAttribPointer(GLuint index, GLint size, GLenum type, GLboolean normalized, GLsizei stride,
     //                            const void* pointer);
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, 0); // define an array of generic vertex attribute data
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(vertices[0]) * 5, 0); // define an array of generic vertex attribute data
     glEnableVertexAttribArray(0); // void glEnableVertexAttribArray(GLuint index); Enable or disable generic vertex attribute array
+    glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(vertices[0]) * 5, (void*)(sizeof(vertices[0]) * 3)); // define an array of generic vertex attribute data
+    glEnableVertexAttribArray(1); // void glEnableVertexAttribArray(GLuint index); Enable or disable generic vertex attribute array
 
     glBindBuffer(GL_ARRAY_BUFFER, 0); // Unbind the buffer because we set it to 0
 

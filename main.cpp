@@ -1,4 +1,5 @@
 #define _USE_MATH_DEFINES
+#define STB_IMAGE_IMPLEMENTATION
 
 #include <stdio.h>
 #include <string.h>
@@ -16,6 +17,7 @@
 #include "Mesh.h"
 #include "Shader.h"
 #include "Camera.h"
+#include "Texture.h"
 
 const float toRadians = 3.14159265f / 180.0f; // M_PI
 
@@ -36,6 +38,9 @@ float minSize = 0.1f;
 std::vector<Mesh*> meshList;
 std::vector<Shader> shaderList;
 
+Texture brickTexture;
+Texture dirtTexture;
+
 GLfloat deltaTime = 0.0f;
 GLfloat lastTime = 0.0f;
 
@@ -55,21 +60,22 @@ static void CreateObjects()
     };
 
     GLfloat vertices[] = {
-        -1.0f, -1.0f, 0.0f,
-        0.0f, -1.0f, 1.0f,
-        1.0f, -1.0f, 0.0f,
-        0.0f, 1.0f, 0.0f
+       // x      y     x     u     v
+        -1.0f, -1.0f, 0.0f, 0.0f, 0.0f,
+        0.0f,  -1.0f, 1.0f, 0.5f, 0.0f,
+        1.0f,  -1.0f, 0.0f, 1.0f, 0.0f,
+        0.0f,  1.0f,  0.0f, 0.5f, 1.0f
     };
 
     Mesh *obj1 = new Mesh();
 
-    obj1->CreateMesh(vertices, indices, 12, 12);
+    obj1->CreateMesh(vertices, indices, 20, 12);
 
     meshList.push_back(obj1);
 
     Mesh *obj2 = new Mesh();
 
-    obj2->CreateMesh(vertices, indices, 12, 12);
+    obj2->CreateMesh(vertices, indices, 20, 12);
 
     meshList.push_back(obj2);
 }
@@ -83,18 +89,23 @@ static void CreateShaders()
 
 int main() 
 {
-    Window mainWindow = Window(800, 600);
+    Window mainWindow = Window(2560, 1440);
     // mainWindow.Initialise();
 
     CreateObjects();
     CreateShaders();
     
-    Camera camera = Camera(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f), -90.0f, 0.0f, 5.0f, 0.5f);
+    Camera camera = Camera(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f), -90.0f, 0.0f, 1.0f, 0.05f);
+
+    brickTexture = Texture("Textures/brick.png");
+    brickTexture.LoadTexture();
+    dirtTexture = Texture("Textures/dirt.png");
+    dirtTexture.LoadTexture();
 
     GLuint uniformProjection = 0, uniformModel = 0, uniformView = 0;
 
     // Create projection variable
-    glm::mat4 projection = glm::perspective(45.0f, (GLfloat)mainWindow.getBufferWidth() / mainWindow.getBufferHeight(), 0.1f, 100.0f); // (y, aspect, near, far
+    glm::mat4 projection = glm::perspective(45.0f, (GLfloat) (mainWindow.getBufferWidth() / mainWindow.getBufferHeight()), 0.1f, 100.0f); // (y, aspect, near, far
 
     // Loop until window close
     while (!mainWindow.getShouldClose()) 
@@ -170,6 +181,7 @@ int main()
         glUniformMatrix4fv(uniformProjection, 1, GL_FALSE, glm::value_ptr(projection));
         glUniformMatrix4fv(uniformView, 1, GL_FALSE, glm::value_ptr(camera.calculateViewMatrix()));
 
+        brickTexture.UseTexture();
         meshList[0]->RenderMesh();
 
         // Obj2
@@ -180,6 +192,8 @@ int main()
         model = glm::scale(model, glm::vec3(0.4f, 0.4f, 1.0f)); // currently, this will go beyond window
         glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
   
+        dirtTexture.UseTexture();
+
         meshList[1]->RenderMesh();
         
         glUseProgram(0);
