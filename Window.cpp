@@ -137,15 +137,15 @@ void Window::handleMouse(GLFWwindow* window, double xPos, double yPos)
 
 	if (theWindow->mouseFirstMoved) {
 		theWindow->mouseFirstMoved = false;
-		theWindow->lastX = xPos;
-		theWindow->lastY = yPos;
+		theWindow->lastX = static_cast<float>(xPos);
+		theWindow->lastY = static_cast<float>(yPos);
 	}
 
-	theWindow->xChange = xPos - theWindow->lastX;
-	theWindow->yChange = theWindow->lastY - yPos;  // can do the other way round but the coordinate system will be upside down
+	theWindow->xChange = static_cast<float>(xPos) - theWindow->lastX;
+	theWindow->yChange = theWindow->lastY - static_cast<float>(yPos);  // can do the other way round but the coordinate system will be upside down
 
-	theWindow->lastX = xPos;
-	theWindow->lastY = yPos;
+	theWindow->lastX = static_cast<float>(xPos);
+	theWindow->lastY = static_cast<float>(yPos);
 }
 
 Window::~Window()
