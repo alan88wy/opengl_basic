@@ -11,8 +11,8 @@ class Light
         Light(GLfloat red, GLfloat green, GLfloat blue, GLfloat aIntensity,
             GLfloat xDirection, GLfloat yDirection, GLfloat zDirection, GLfloat dIntensity);
 
-        void useLight(GLfloat ambientIntensityLocation, GLfloat ambientColourLocation,
-            GLfloat diffuseIntensityLocation, GLfloat directionLocation);
+        void useLight(GLuint ambientIntensityLocation, GLuint ambientColourLocation,
+            GLuint diffuseIntensityLocation, GLuint directionLocation);
 
         ~Light();
 

@@ -19,6 +19,7 @@
 #include "Camera.h"
 #include "Texture.h"
 #include "Light.h"
+#include "Material.h"
 
 const float toRadians = 3.14159265f / 180.0f; // M_PI
 
@@ -42,6 +43,9 @@ std::vector<Shader> shaderList;
 Texture brickTexture;
 Texture dirtTexture;
 Light mainLight;
+
+Material shinnyMaterial;
+Material dullMaterial;
 
 GLfloat deltaTime = 0.0f;
 GLfloat lastTime = 0.0f;
@@ -111,9 +115,9 @@ static void CreateObjects()
 
     GLfloat vertices[] = {
        // x      y     x     u     v    normal
-        -1.0f, -1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+        -1.0f, -1.0f, -0.6f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
         0.0f,  -1.0f, 1.0f, 0.5f, 0.0f, 0.0f, 0.0f, 0.0f,
-        1.0f,  -1.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+        1.0f,  -1.0f, 0.6f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f,
         0.0f,  1.0f,  0.0f, 0.5f, 1.0f, 0.0f, 0.0f, 0.0f
     };
 
@@ -154,11 +158,16 @@ int main()
     dirtTexture = Texture("Textures/dirt.png");
     dirtTexture.LoadTexture();
 
-    mainLight = Light(1.0f, 1.0f, 1.0f, 0.2f, 2.0f, -1.0f, -2.0f, 1.0f);
+    shinnyMaterial = Material(1.0f, 32);
+    dullMaterial = Material(0.3f, 4);
 
-    GLuint uniformProjection = 0, uniformModel = 0, uniformView = 0, 
-        uniformAmbientIntensity = 0, uniformAmbientColour = 0,
-        uniformDirection = 0, uniformDiffuseIntensity = 0;
+    mainLight = Light(1.0f, 1.0f, 1.0f, 0.2f, 2.0f, -1.0f, -2.0f, 0.5f);
+
+    GLuint uniformProjection = 0,        uniformModel = 0,            uniformView = 0, 
+           uniformAmbientIntensity = 0,  uniformAmbientColour = 0,
+           uniformDirection = 0,         uniformDiffuseIntensity = 0,
+           uniformSpecularIntensity = 0, uniformShininess = 0,
+           uniformEyePosition = 0;
 
     // Create projection variable
     glm::mat4 projection = glm::perspective(45.0f, (GLfloat) (mainWindow.getBufferWidth() / mainWindow.getBufferHeight()), 0.1f, 100.0f); // (y, aspect, near, far
@@ -222,6 +231,9 @@ int main()
         uniformAmbientIntensity = shaderList[0].GetAmbientIntensityLocation();
         uniformDirection = shaderList[0].GetDirectionLocation();
         uniformDiffuseIntensity = shaderList[0].GetDiffuseIntensityLocation();
+        uniformEyePosition = shaderList[0].GetEyePositionLocation();
+        uniformSpecularIntensity = shaderList[0].GetSpecularIntensityLocation();
+        uniformShininess = shaderList[0].GetShininessLocation();
 
         mainLight.useLight(uniformAmbientIntensity, uniformAmbientColour, uniformDiffuseIntensity, uniformDirection);
 
@@ -235,28 +247,32 @@ int main()
 
         // model = glm::rotate(model, curAngle * toRadians, glm::vec3(0.0f, 1.0f, 0.0f)); // Rotate along y axis
         // scaling
-        model = glm::scale(model, glm::vec3(0.4f, 0.4f, 1.0f)); // currently, this will go beyond window
+        // model = glm::scale(model, glm::vec3(0.4f, 0.4f, 1.0f)); // currently, this will go beyond window
 
         // Specify the value of a uniform variable for the current program object
         // void glUniformMatrix4fv(GLint location, GLsizei count, GLboolean transpose, const GLfloat * value);
         glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
         glUniformMatrix4fv(uniformProjection, 1, GL_FALSE, glm::value_ptr(projection));
         glUniformMatrix4fv(uniformView, 1, GL_FALSE, glm::value_ptr(camera.calculateViewMatrix()));
+        glUniform3f(uniformEyePosition, camera.getCameraPosition().x, camera.getCameraPosition().y, camera.getCameraPosition().z);
+   
 
         brickTexture.UseTexture();
         
+        shinnyMaterial.UseMaterials(uniformSpecularIntensity, uniformShininess);
 
         meshList[0]->RenderMesh();
 
         // Obj2
         model = glm::mat4(1.0f);
         // model = glm::translate(model, glm::vec3(triOffset, 0.0f, -2.5f));  // We only translate x value with triOffset
-        model = glm::translate(model, glm::vec3(0.0f, 1.0f, -2.5f));  // We only translate x value with triOffset
+        model = glm::translate(model, glm::vec3(0.0f, 4.0f, -2.5f));  // We only translate x value with triOffset
        // model = glm::rotate(model, curAngle * toRadians, glm::vec3(1.0f, 0.0f, 0.0f)); // Rotate along y axis
-        model = glm::scale(model, glm::vec3(0.4f, 0.4f, 1.0f)); // currently, this will go beyond window
+       // model = glm::scale(model, glm::vec3(0.4f, 0.4f, 1.0f)); // currently, this will go beyond window
         glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
   
         dirtTexture.UseTexture();
+        dullMaterial.UseMaterials(uniformSpecularIntensity, uniformShininess);
 
         meshList[1]->RenderMesh();
         
