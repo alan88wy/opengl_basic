@@ -12,7 +12,6 @@ Window::Window()
 		keys[i] = 0;  // false;
 	}
 
-	Initialise();
 }
 
 Window::Window(GLint windowWidth, GLint windowHeight)
@@ -23,7 +22,6 @@ Window::Window(GLint windowWidth, GLint windowHeight)
 	xChange = 0.0f;
 	yChange = 0.0f;
 
-	Initialise();
 }
 
 int Window::Initialise()
