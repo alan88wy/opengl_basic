@@ -109,7 +109,7 @@ GLfloat Window::getYChange()
 	return theChange;
 }
 
-void Window::handleKeys(GLFWwindow* window, int key, int code, int action, int mode) 
+void Window::handleKeys(GLFWwindow* window, int key, int code, int action, int mode)
 {
 
 	Window* theWindow = static_cast<Window*>(glfwGetWindowUserPointer(window)); // Get the user pointer which is "this" above

@@ -8,7 +8,7 @@ class Material
         Material();
         Material(GLfloat sIntensity, GLfloat shine);
 
-        void UseMaterials(GLuint specularIntensityLocation, GLuint shininessLocation);
+        void UseMaterial(GLuint specularIntensityLocation, GLuint shininessLocation);
 
         ~Material();
 

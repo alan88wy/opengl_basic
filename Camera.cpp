@@ -14,16 +14,16 @@ Camera::Camera()
     update();
 }
 
-Camera::Camera(glm::vec3 position, glm::vec3 up, GLfloat yaw, GLfloat pitch, GLfloat moveSpeed, GLfloat turnSpeed)
+Camera::Camera(glm::vec3 startPosition, glm::vec3 startUp, GLfloat startYaw, GLfloat startPitch, GLfloat startMoveSpeed, GLfloat startTurnSpeed)
 {
-    this->position = position;
-    this->worldUp = up;
-    this->yaw = yaw;
-    this->pitch = pitch;
-    this->front = glm::vec3(0.0f, 0.0f, -1.0f);
+    position = startPosition;
+    worldUp = startUp;
+    yaw = startYaw;
+    pitch = startPitch;
+    front = glm::vec3(0.0f, 0.0f, -1.0f);
 
-    this->moveSpeed = moveSpeed;
-    this->turnSpeed = turnSpeed;
+    moveSpeed = startMoveSpeed;
+    turnSpeed = startTurnSpeed;
 
     update();
 }
@@ -95,6 +95,11 @@ void Camera::update()
 glm::vec3 Camera::getCameraPosition()
 {
     return position;
+}
+
+glm::vec3 Camera::getCameraDirection()
+{
+    return glm::normalize(front);
 }
 
 Camera::~Camera()
