@@ -24,8 +24,21 @@
 #include "PointLight.h"
 #include "Material.h"
 #include "SpotLight.h"
+#include "Model.h"
 
 const float toRadians = 3.14159265f / 180.0f; // M_PI
+
+bool direction = true;
+float triOffset = 0.0f;
+float triMaxOffset = 15.0f;
+float triIncrement = 0.002f;
+
+float curAngle = 0.0f;
+
+bool sizeDirection = true;
+float curSize = 0.4f;
+float maxSize = 0.8f;
+float minSize = 0.1f;
 
 Window mainWindow;
 Camera camera;
@@ -39,6 +52,11 @@ Texture plainTexture;
 
 Material shinnyMaterial;
 Material dullMaterial;
+
+Model xwing;
+Model spaceship1;
+Model spaceship2;
+Model spaceship3;
 
 DirectionalLight mainLight;
 PointLight pointLights[MAX_POINT_LIGHTS];
@@ -161,7 +179,8 @@ static void CreateShaders()
 
 int main() 
 {
-    mainWindow = Window(2560, 1440);
+    //mainWindow = Window(2560, 1440);
+    mainWindow = Window(2560, 2048);
     mainWindow.Initialise();
 
     CreateObjects();
@@ -170,21 +189,27 @@ int main()
     camera = Camera(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f), -60.0f, 0.0f, 5.0f, 0.5f);
 
     brickTexture = Texture("Textures/brick.png");
-    brickTexture.LoadTexture();
+    brickTexture.LoadTextureA();
     dirtTexture = Texture("Textures/dirt.png");
-    dirtTexture.LoadTexture();
+    dirtTexture.LoadTextureA();
     plainTexture = Texture("Textures/plain.png");
-    plainTexture.LoadTexture();
+    plainTexture.LoadTextureA();
 
     shinnyMaterial = Material(4.0f, 256);
     dullMaterial = Material(0.3f, 4);
+
+    xwing = Model();
+    xwing.LoadModel("Models/x-wing.obj");
+
+    spaceship1 = Model();
+    spaceship1.LoadModel("Models/E-45-Aircraft/E 45 Aircraft_obj.obj");
 
     /*mainLight = DirectionalLight(1.0f, 1.0f, 1.0f, 
                                  0.1f, 0.3f, 
                                  0.0f, 0.0f, -1.0f);*/
 
     mainLight = DirectionalLight(1.0f, 1.0f, 1.0f,
-                                 0.1f, 0.1f,
+                                 0.3f, 0.6f,
                                  0.0f, 0.0f, -1.0f);
 
     unsigned int pointLightCount = 0;
@@ -243,6 +268,37 @@ int main()
 
         // Get & Handle user input events
         glfwPollEvents();
+
+        if (direction) {
+            triOffset += triIncrement;
+        }
+        else {
+            triOffset -= triIncrement;
+        }
+
+        if (abs(triOffset) >= triMaxOffset) {
+            direction = !direction;
+        }
+
+        curAngle += 0.005f;
+
+        // Not necessay but good to do to ensure it is not to large after running for a while
+        if (curAngle >= 360) {
+            curAngle -= 360;
+        }
+
+        // if (sizeDirection) {
+        if (sizeDirection) {
+            curSize += 0.0001f;
+        }
+        else {
+            curSize -= 0.0001f;
+        }
+
+        if (curSize >= maxSize || curSize <= minSize) {
+            sizeDirection = !sizeDirection;
+        }
+
 
         // Managing key press
         camera.keyControl(mainWindow.getKeys(), deltaTime);
@@ -303,8 +359,8 @@ int main()
         model = glm::mat4(1.0f);
         // model = glm::translate(model, glm::vec3(triOffset, 0.0f, -2.5f));  // We only translate x value with triOffset
         model = glm::translate(model, glm::vec3(0.0f, 4.0f, -2.5f));  // We only translate x value with triOffset
-       // model = glm::rotate(model, curAngle * toRadians, glm::vec3(1.0f, 0.0f, 0.0f)); // Rotate along y axis
-       // model = glm::scale(model, glm::vec3(0.4f, 0.4f, 1.0f)); // currently, this will go beyond window
+        // model = glm::rotate(model, curAngle * toRadians, glm::vec3(1.0f, 0.0f, 0.0f)); // Rotate along y axis
+        // model = glm::scale(model, glm::vec3(0.006f, 0.006f, 0.006f)); // currently, this will go beyond window
         glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
   
         dirtTexture.UseTexture();
@@ -321,6 +377,25 @@ int main()
         // plainTexture.UseTexture();
         shinnyMaterial.UseMaterial(uniformSpecularIntensity, uniformShininess);
         meshList[2]->RenderMesh();
+
+        model = glm::mat4(1.0f);
+        // model = glm::translate(model, glm::vec3(-7.0f, 0.0f, 10.0f));
+        model = glm::translate(model, glm::vec3(-7.0f, 0.0f, triOffset));
+        // model = glm::rotate(model, curAngle * toRadians, glm::vec3(1.0f, 0.0f, 0.0f)); // Rotate along y axis
+        model = glm::scale(model, glm::vec3(0.006f, 0.006f, 0.006f));
+        glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+        shinnyMaterial.UseMaterial(uniformSpecularIntensity, uniformShininess);
+        xwing.RenderModel();
+
+        model = glm::mat4(1.0f);
+        model = glm::translate(model, glm::vec3(-3.0f, 1.5f, 0.0f));
+        // model = glm::translate(model, glm::vec3(triOffset, 1.5f, 0.0f));
+        model = glm::rotate(model, -90.0f * toRadians, glm::vec3(1.0f, 0.0f, 0.0f)); // Rotate along y axis
+        // model = glm::rotate(model, curAngle * toRadians, glm::vec3(1.0f, 0.0f, 0.0f)); // Rotate along y axis
+        model = glm::scale(model, glm::vec3(0.4f, 0.4f, 0.4f));
+        glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+        shinnyMaterial.UseMaterial(uniformSpecularIntensity, uniformShininess);
+        spaceship1.RenderModel();
         
         glUseProgram(0);
 

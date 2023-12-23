@@ -9,7 +9,9 @@ public:
 	Texture();
 	Texture(const char* fileLoc);
 
-	void LoadTexture();
+	bool LoadTexture();  // RGB
+	bool LoadTextureA(); // RGBA, Texture with Alpha Channel
+
 	void UseTexture();
 	void ClearTexture();
 
