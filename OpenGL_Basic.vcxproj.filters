@@ -13,6 +13,12 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="Resource Files\Materials">
+      <UniqueIdentifier>{86c4912b-fa52-470a-a7d1-9d28b542c32d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resource Files\Shaders">
+      <UniqueIdentifier>{f99124b3-09d2-46dd-a911-2a4fd0a8e3c3}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -91,22 +97,22 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Shaders\shader.vert">
-      <Filter>Resource Files</Filter>
-    </None>
     <None Include="Shaders\shader.frag">
-      <Filter>Resource Files</Filter>
+      <Filter>Resource Files\Shaders</Filter>
+    </None>
+    <None Include="Shaders\shader.vert">
+      <Filter>Resource Files\Shaders</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Textures\brick.png">
-      <Filter>Resource Files</Filter>
+      <Filter>Resource Files\Materials</Filter>
     </Image>
     <Image Include="Textures\dirt.png">
-      <Filter>Resource Files</Filter>
+      <Filter>Resource Files\Materials</Filter>
     </Image>
     <Image Include="Textures\plain.png">
-      <Filter>Resource Files</Filter>
+      <Filter>Resource Files\Materials</Filter>
     </Image>
   </ItemGroup>
 </Project>
