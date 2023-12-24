@@ -21,6 +21,6 @@ class Mesh
 		// VBO - Vertex Buffer Object (VBO) to store vertex data in GPU memory
 
 		GLuint VAO, VBO, IBO;
-		GLsizei indexCount;
+		GLuint indexCount;
 };
 
