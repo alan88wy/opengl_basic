@@ -8,6 +8,8 @@ Window::Window()
 	xChange = 0.0f;
 	yChange = 0.0f;
 
+	mouseFirstMoved = true;
+
 	for (size_t i = 0; i < 1024; i++) {
 		keys[i] = 0;  // false;
 	}
@@ -21,6 +23,12 @@ Window::Window(GLint windowWidth, GLint windowHeight)
 
 	xChange = 0.0f;
 	yChange = 0.0f;
+
+	mouseFirstMoved = true;
+
+	for (size_t i = 0; i < 1024; i++) {
+		keys[i] = 0;  // false;
+	}
 
 }
 
@@ -82,7 +90,7 @@ int Window::Initialise()
 	glEnable(GL_DEPTH_TEST);
 
 	// Create Viewport
-	glViewport(0, 0, bufferWidth, bufferHeight);
+	SetViewPort(0, 0, bufferWidth, bufferHeight);
 
 	glfwSetWindowUserPointer(mainWindow, this);
 
@@ -135,15 +143,20 @@ void Window::handleMouse(GLFWwindow* window, double xPos, double yPos)
 
 	if (theWindow->mouseFirstMoved) {
 		theWindow->mouseFirstMoved = false;
-		theWindow->lastX = static_cast<float>(xPos);
-		theWindow->lastY = static_cast<float>(yPos);
+		theWindow->lastX = xPos;
+		theWindow->lastY = yPos;
 	}
 
-	theWindow->xChange = static_cast<float>(xPos) - theWindow->lastX;
-	theWindow->yChange = theWindow->lastY - static_cast<float>(yPos);  // can do the other way round but the coordinate system will be upside down
+	theWindow->xChange = xPos - theWindow->lastX;
+	theWindow->yChange = theWindow->lastY - yPos;  // can do the other way round but the coordinate system will be upside down
 
-	theWindow->lastX = static_cast<float>(xPos);
-	theWindow->lastY = static_cast<float>(yPos);
+	theWindow->lastX = xPos;
+	theWindow->lastY = yPos;
+}
+
+void Window::SetViewPort(GLuint x, GLuint y, GLuint width, GLuint height)
+{
+	glViewport(x, y, width, height);
 }
 
 Window::~Window()

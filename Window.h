@@ -25,6 +25,7 @@ class Window
 		GLfloat getYChange();
 
 		void swapBuffers() { glfwSwapBuffers(mainWindow); }
+		void SetViewPort(GLuint x, GLuint y, GLuint width, GLuint height);
 
 		~Window();
 

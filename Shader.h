@@ -5,7 +5,9 @@
 #include <iostream>
 #include <fstream>
 
-#include <GL\glew.h>
+#include <GL/glew.h>
+#include <GLM/glm.hpp>
+#include <GLM/gtc/type_ptr.hpp>
 
 #include "CommonValues.h"
 
@@ -35,9 +37,12 @@ class Shader
 		GLuint GetShininessLocation() const;
 		GLuint GetEyePositionLocation() const;
 
-		void SetDirectionalLight(DirectionalLight * dLight) const;
+		void SetDirectionalLight(DirectionalLight * dLight);
 		void SetPointLights(PointLight * pLight, unsigned int lightCount);
 		void SetSpotLights(SpotLight* sLight, unsigned int lightCount);
+		void SetTecture(GLuint textureUnit);
+		void SetDirectionalShadowMap(GLuint textureUnit);
+		void SetDirectionalLightTransform(glm::mat4* lTransform);
 
 		void UseShader();
 		void ClearShader();
@@ -50,7 +55,9 @@ class Shader
 		int spotLightCount;
 
 		GLuint shaderID, uniformProjection, uniformModel, uniformView, uniformEyePosition;
-		GLuint uniformSpecularIntensity, uniformShininess;
+		GLuint uniformSpecularIntensity, uniformShininess, 
+			   uniformTexture,
+			   uniformDirectionalLightTransform, uniformDirectionalShadowMap;
 
 		struct {
 			GLuint uniformColour;
@@ -73,9 +80,6 @@ class Shader
 			GLuint uniformExponent;
 		} uniformPointLight[MAX_POINT_LIGHTS];
 
-		void CompileShader(const char* vertexCode, const char* fragmentCode);
-		void AddShader(GLuint theProgram, const char* shaderCode, GLenum shaderType);
-
 		GLuint uniformSpotLightCount;
 
 		struct {
@@ -92,5 +96,8 @@ class Shader
 			GLuint uniformEdge;
 
 		} uniformSpotLight[MAX_SPOT_LIGHTS];
+
+		void CompileShader(const char* vertexCode, const char* fragmentCode);
+		void AddShader(GLuint theProgram, const char* shaderCode, GLenum shaderType);
 };
 
