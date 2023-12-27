@@ -210,7 +210,7 @@ GLuint Shader::GetEyePositionLocation() const
 	return uniformEyePosition;
 }
 
-void Shader::SetDirectionalLight(DirectionalLight* dLight)
+void Shader::SetDirectionalLight(DirectionalLight* dLight) const
 {
 	dLight->useLight(uniformDirectionalLight.uniformAmbientIntensity, uniformDirectionalLight.uniformColour,
 		             uniformDirectionalLight.uniformDiffuseIntensity, uniformDirectionalLight.uniformDirection);

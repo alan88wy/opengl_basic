@@ -37,7 +37,7 @@ class Shader
 		GLuint GetShininessLocation() const;
 		GLuint GetEyePositionLocation() const;
 
-		void SetDirectionalLight(DirectionalLight * dLight);
+		void SetDirectionalLight(DirectionalLight * dLight)  const;
 		void SetPointLights(PointLight * pLight, unsigned int lightCount);
 		void SetSpotLights(SpotLight* sLight, unsigned int lightCount);
 		void SetTecture(GLuint textureUnit);

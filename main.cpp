@@ -244,21 +244,24 @@ static void RenderScene()
     shinnyMaterial.UseMaterial(uniformSpecularIntensity, uniformShininess);
     meshList[2]->RenderMesh();
 
-    model = glm::mat4(1.0f);
-    // model = glm::translate(model, glm::vec3(-7.0f, 0.0f, 10.0f));
-    model = glm::translate(model, glm::vec3(-7.0f, 0.0f, triOffset));
-    // model = glm::rotate(model, curAngle * toRadians, glm::vec3(1.0f, 0.0f, 0.0f)); // Rotate along y axis
-    model = glm::scale(model, glm::vec3(0.006f, 0.006f, 0.006f));
-    glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
-    shinnyMaterial.UseMaterial(uniformSpecularIntensity, uniformShininess);
-    xwing.RenderModel();
-
-    blackhawkAngle += 0.1f;
+        blackhawkAngle += 0.1f;
 
     if (blackhawkAngle > 360.0f)
     {
         blackhawkAngle = 0.1f;
     }
+
+    model = glm::mat4(1.0f);
+    model = glm::rotate(model, -blackhawkAngle * toRadians, glm::vec3(0.0f, 1.0f, 0.0f));
+    // model = glm::translate(model, glm::vec3(-7.0f, 0.0f, 10.0f));
+    model = glm::translate(model, glm::vec3(-7.0f, 2.0f, 0.0f));
+    // model = glm::rotate(model, -20.0f * toRadians, glm::vec3(0.0f, 0.0f, 1.0f));
+    // model = glm::rotate(model, -90.0f * toRadians, glm::vec3(1.0f, 0.0f, 0.0f));
+    // model = glm::rotate(model, curAngle * toRadians, glm::vec3(1.0f, 0.0f, 0.0f)); // Rotate along y axis
+    model = glm::scale(model, glm::vec3(0.006f, 0.006f, 0.006f));
+    glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+    shinnyMaterial.UseMaterial(uniformSpecularIntensity, uniformShininess);
+    xwing.RenderModel();
 
     //model = glm::mat4(1.0f);
     //model = glm::translate(model, glm::vec3(-3.0f, 1.5f, 0.0f));
