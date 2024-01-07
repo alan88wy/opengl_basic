@@ -21,7 +21,7 @@ class ShadowMap
 
         ~ShadowMap();
 
-    private:
+        protected:
 
         GLuint FBO, shadowMap;
         GLuint shadowWidth, shadowHeight;

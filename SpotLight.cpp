@@ -5,14 +5,17 @@ SpotLight::SpotLight()
     direction = normalize(glm::vec3(0.0f, -1.0f, 0.0f));
     edge = 0.0f;
     procEdge = cosf(glm::radians(edge));
+    isOn = true;
 }
 
-SpotLight::SpotLight(GLfloat red, GLfloat green, GLfloat blue,
-    GLfloat aIntensity, GLfloat dIntensity,
-    GLfloat xPos, GLfloat yPos, GLfloat zPos,
-    GLfloat xDirection, GLfloat yDirection, GLfloat zDirection,
-    GLfloat con, GLfloat lin, GLfloat exp, GLfloat edg) :
-    PointLight(red, green, blue, aIntensity, dIntensity, xPos, yPos, zPos, con, lin, exp)
+SpotLight::SpotLight(GLuint shadowWidth, GLuint shadowHeight,
+                     GLfloat near, GLfloat far, 
+                     GLfloat red, GLfloat green, GLfloat blue,
+                     GLfloat aIntensity, GLfloat dIntensity,
+                     GLfloat xPos, GLfloat yPos, GLfloat zPos,
+                     GLfloat xDirection, GLfloat yDirection, GLfloat zDirection,
+                     GLfloat con, GLfloat lin, GLfloat exp, GLfloat edg) :
+                     PointLight(shadowWidth, shadowHeight, near, far, red, green, blue, aIntensity, dIntensity, xPos, yPos, zPos, con, lin, exp)
 {
     direction = normalize(glm::vec3(xDirection, yDirection, zDirection));
     edge = edg;

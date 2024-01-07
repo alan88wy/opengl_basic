@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
@@ -150,6 +150,7 @@
     <ClCompile Include="Material.cpp" />
     <ClCompile Include="Mesh.cpp" />
     <ClCompile Include="Model.cpp" />
+    <ClCompile Include="OmniShadowMap.cpp" />
     <ClCompile Include="PointLight.cpp" />
     <ClCompile Include="Shader.cpp" />
     <ClCompile Include="ShadowMap.cpp" />
@@ -165,6 +166,7 @@
     <ClInclude Include="Material.h" />
     <ClInclude Include="Mesh.h" />
     <ClInclude Include="Model.h" />
+    <ClInclude Include="OmniShadowMap.h" />
     <ClInclude Include="PointLight.h" />
     <ClInclude Include="Shader.h" />
     <ClInclude Include="ShadowMap.h" />
@@ -175,6 +177,9 @@
   <ItemGroup>
     <None Include="Shaders\directional_shadow_map.frag" />
     <None Include="Shaders\directional_shadow_map.vert" />
+    <None Include="Shaders\omni_directional_shadow_map.geom" />
+    <None Include="Shaders\omni_directional_shadow_map.frag" />
+    <None Include="Shaders\omni_directional_shadow_map.vert" />
     <None Include="Shaders\shader.frag" />
     <None Include="Shaders\shader.vert" />
   </ItemGroup>

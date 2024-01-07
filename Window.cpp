@@ -8,7 +8,7 @@ Window::Window()
 	xChange = 0.0f;
 	yChange = 0.0f;
 
-	mouseFirstMoved = true;
+	// mouseFirstMoved = true;
 
 	for (size_t i = 0; i < 1024; i++) {
 		keys[i] = 0;  // false;
@@ -24,7 +24,7 @@ Window::Window(GLint windowWidth, GLint windowHeight)
 	xChange = 0.0f;
 	yChange = 0.0f;
 
-	mouseFirstMoved = true;
+	// mouseFirstMoved = true;
 
 	for (size_t i = 0; i < 1024; i++) {
 		keys[i] = 0;  // false;
@@ -43,8 +43,8 @@ int Window::Initialise()
 
 	// Setup GLFW Windows Properties
 	// OpenGL version
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 5);
 	// Core Profile
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 	// Allow forward compatiblity
@@ -79,6 +79,7 @@ int Window::Initialise()
 	glewExperimental = GL_TRUE;
 
 	GLenum error = glewInit();
+
 	if (error != GLEW_OK)
 	{
 		printf("Error: %s", glewGetErrorString(error));
@@ -90,7 +91,8 @@ int Window::Initialise()
 	glEnable(GL_DEPTH_TEST);
 
 	// Create Viewport
-	SetViewPort(0, 0, bufferWidth, bufferHeight);
+	// SetViewPort(0, 0, bufferWidth, bufferHeight);
+	glViewport(0, 0, bufferWidth, bufferHeight);
 
 	glfwSetWindowUserPointer(mainWindow, this);
 
@@ -154,10 +156,10 @@ void Window::handleMouse(GLFWwindow* window, double xPos, double yPos)
 	theWindow->lastY = yPos;
 }
 
-void Window::SetViewPort(GLuint x, GLuint y, GLuint width, GLuint height)
-{
-	glViewport(x, y, width, height);
-}
+//void Window::SetViewPort(GLuint x, GLuint y, GLuint width, GLuint height)
+//{
+//	glViewport(x, y, width, height);
+//}
 
 Window::~Window()
 {

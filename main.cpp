@@ -25,35 +25,23 @@
 #include "Material.h"
 #include "SpotLight.h"
 #include "Model.h"
+#include "ShadowMap.h"
 
 const float toRadians = 3.14159265f / 180.0f; // M_PI
 
-GLuint uniformProjection = 0, uniformModel = 0, uniformView = 0, uniformEyePosition = 0,
-uniformSpecularIntensity = 0, uniformShininess = 0,
-uniformDirectionalLightTransform = 0;
-
-bool direction = true;
-float triOffset = 0.0f;
-float triMaxOffset = 15.0f;
-float triIncrement = 0.002f;
-
-float curAngle = 0.0f;
-
-bool sizeDirection = true;
-float curSize = 0.4f;
-float maxSize = 0.8f;
-float minSize = 0.1f;
+GLuint  uniformProjection = 0, uniformModel = 0, uniformView = 0, uniformEyePosition = 0,
+        uniformSpecularIntensity = 0, uniformShininess = 0,
+        uniformOmniLightPos = 0, uniformFarPlane = 0;
 
 Window mainWindow;
-Camera camera;
-
-unsigned int pointLightCount = 0;
-unsigned int spotLightCount = 0;
 
 std::vector<Mesh*> meshList;
 std::vector<Shader> shaderList;
 
 Shader directionalShadowShader;
+Shader omniShadowShader;
+
+Camera camera;
 
 Texture brickTexture;
 Texture dirtTexture;
@@ -64,15 +52,18 @@ Material dullMaterial;
 
 Model xwing;
 Model blackhawk;
-Model spaceship1;
-Model spaceship2;
-Model spaceship3;
+//Model spaceship1;
+//Model spaceship2;
+//Model spaceship3;
 
 GLfloat blackhawkAngle = 0.0f;
 
 DirectionalLight mainLight;
 PointLight pointLights[MAX_POINT_LIGHTS];
 SpotLight spotLights[MAX_SPOT_LIGHTS];
+
+unsigned int pointLightCount = 0;
+unsigned int spotLightCount = 0;
 
 GLfloat deltaTime = 0.0f;
 GLfloat lastTime = 0.0f;
@@ -88,6 +79,15 @@ static const char* vShadowShader = "Shaders/directional_shadow_map.vert";
 
 // Directional Shadow shader fragment
 static const char* vShadowFrag = "Shaders/directional_shadow_map.frag";
+
+// Omni Directional shadow shader vertex
+static const char* vOmniShadowShader = "Shaders/omni_directional_shadow_map.vert";
+
+// Omni Directional shadow shader fragment
+static const char* vOmniShadowFrag = "Shaders/omni_directional_shadow_map.frag";
+
+// Omni Directional shadow Geometry shader
+static const char* vOmniGeoShader = "Shaders/omni_directional_shadow_map.geom";
 
 static void calcAverageNormals(unsigned int* indices, unsigned int indiceCount,
                                GLfloat* vertices, unsigned int verticeCount, 
@@ -194,7 +194,10 @@ static void CreateShaders()
     shader1->CreateFromFiles(vShader, fShader);
     shaderList.push_back(*shader1);
 
+    directionalShadowShader = Shader();
     directionalShadowShader.CreateFromFiles(vShadowShader, vShadowFrag);
+    omniShadowShader = Shader();
+    omniShadowShader.CreateFromFiles(vOmniShadowShader, vOmniGeoShader, vOmniShadowFrag);
 }
 
 static void RenderScene()
@@ -244,7 +247,7 @@ static void RenderScene()
     shinnyMaterial.UseMaterial(uniformSpecularIntensity, uniformShininess);
     meshList[2]->RenderMesh();
 
-        blackhawkAngle += 0.1f;
+    blackhawkAngle += 0.1f;
 
     if (blackhawkAngle > 360.0f)
     {
@@ -254,7 +257,8 @@ static void RenderScene()
     model = glm::mat4(1.0f);
     model = glm::rotate(model, -blackhawkAngle * toRadians, glm::vec3(0.0f, 1.0f, 0.0f));
     // model = glm::translate(model, glm::vec3(-7.0f, 0.0f, 10.0f));
-    model = glm::translate(model, glm::vec3(-7.0f, 2.0f, 0.0f));
+    // model = glm::translate(model, glm::vec3(-7.0f, 0.0f, 2.0f));
+    model = glm::translate(model, glm::vec3(-7.0f, 0.0f, 2.0f));
     // model = glm::rotate(model, -20.0f * toRadians, glm::vec3(0.0f, 0.0f, 1.0f));
     // model = glm::rotate(model, -90.0f * toRadians, glm::vec3(1.0f, 0.0f, 0.0f));
     // model = glm::rotate(model, curAngle * toRadians, glm::vec3(1.0f, 0.0f, 0.0f)); // Rotate along y axis
@@ -279,6 +283,7 @@ static void RenderScene()
     model = glm::rotate(model, -20.0f * toRadians, glm::vec3(0.0f, 0.0f, 1.0f));
     model = glm::rotate(model, -90.0f * toRadians, glm::vec3(1.0f, 0.0f, 0.0f));
     model = glm::scale(model, glm::vec3(0.4f, 0.4f, 0.4f));
+
     glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
     shinnyMaterial.UseMaterial(uniformSpecularIntensity, uniformShininess);
     blackhawk.RenderModel();
@@ -289,7 +294,9 @@ static void DirectionalShadowMapPass(DirectionalLight* light)
 {
     directionalShadowShader.UseShader();
 
-    mainWindow.SetViewPort(0, 0, light->GetShadowMap()->GetShadowWidth(), light->GetShadowMap()->GetShadowHeight());
+    // mainWindow.SetViewPort(0, 0, light->GetShadowMap()->GetShadowWidth(), light->GetShadowMap()->GetShadowHeight());
+
+    glViewport(0, 0, light->GetShadowMap()->GetShadowWidth(), light->GetShadowMap()->GetShadowHeight());
 
     light->GetShadowMap()->write();
 
@@ -298,13 +305,44 @@ static void DirectionalShadowMapPass(DirectionalLight* light)
     uniformModel = directionalShadowShader.GetModelLocation();
     directionalShadowShader.SetDirectionalLightTransform(&(light->CalculateLightTransform()));
 
+    directionalShadowShader.Validate();
+
     RenderScene();
 
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
 }
 
-static void RenderPass(glm::mat4 viewMatrix, glm::mat4 projectionMatrix)
+static void OmniShadowMapPass(PointLight* light)
+{
+    glViewport(0, 0, light->GetShadowMap()->GetShadowWidth(), light->GetShadowMap()->GetShadowHeight());
+
+    omniShadowShader.UseShader();
+
+    // mainWindow.SetViewPort(0, 0, light->GetShadowMap()->GetShadowWidth(), light->GetShadowMap()->GetShadowHeight());
+
+
+    uniformModel = omniShadowShader.GetModelLocation();
+    uniformOmniLightPos = omniShadowShader.GetOmniLightPosLocation();
+    uniformFarPlane = omniShadowShader.GetFarPlaneLocation();
+
+    light->GetShadowMap()->write();
+
+    glClear(GL_DEPTH_BUFFER_BIT);
+
+    glUniform3f(uniformOmniLightPos, light->GetPosition().x, light->GetPosition().y, light->GetPosition().z);
+    glUniform1f(uniformFarPlane, light->GetFarPlane());
+
+    omniShadowShader.SetLightMatrices(light->CalculateLightTransform());
+
+    omniShadowShader.Validate();
+
+    RenderScene();
+
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+}
+
+static void RenderPass(glm::mat4 projectionMatrix, glm::mat4 viewMatrix)
 {
     shaderList[0].UseShader();
 
@@ -315,7 +353,8 @@ static void RenderPass(glm::mat4 viewMatrix, glm::mat4 projectionMatrix)
     uniformSpecularIntensity = shaderList[0].GetSpecularIntensityLocation();
     uniformShininess = shaderList[0].GetShininessLocation();
 
-    mainWindow.SetViewPort(0, 0, 2560, 2048);
+    // mainWindow.SetViewPort(0, 0, 2560, 2048);
+    glViewport(0, 0, 2560, 2048);
 
     // clear window
     glClearColor(0.0f, 0.0f, 0.0f, 1.0f);  // no divide by 256. RGB Color (r, g, b) plus transparancy
@@ -326,20 +365,22 @@ static void RenderPass(glm::mat4 viewMatrix, glm::mat4 projectionMatrix)
     glUniform3f(uniformEyePosition, camera.getCameraPosition().x, camera.getCameraPosition().y, camera.getCameraPosition().z);
 
     shaderList[0].SetDirectionalLight(&mainLight);
-    shaderList[0].SetPointLights(pointLights, pointLightCount);
-    shaderList[0].SetSpotLights(spotLights, spotLightCount);
+    shaderList[0].SetPointLights(pointLights, pointLightCount, 3, 0);
+    shaderList[0].SetSpotLights(spotLights, spotLightCount, 3 + pointLightCount, pointLightCount);
     shaderList[0].SetDirectionalLightTransform(&(mainLight.CalculateLightTransform()));
 
-    mainLight.GetShadowMap()->Read(GL_TEXTURE1);
+    mainLight.GetShadowMap()->Read(GL_TEXTURE2);
 
-    shaderList[0].SetTecture(0);  // Default is 0. So, we really do not need to do this
-    shaderList[0].SetDirectionalShadowMap(1);
+    shaderList[0].SetTecture(1);  // Default is 0. So, we really do not need to do this
+    shaderList[0].SetDirectionalShadowMap(2);
  
     glm::vec3 lowerLight = camera.getCameraPosition();
 
     lowerLight.y -= 0.3f;
 
     spotLights[0].SetFlash(lowerLight, camera.getCameraDirection());
+
+    shaderList[0].Validate();
 
     RenderScene();
 
@@ -372,31 +413,36 @@ int main()
     blackhawk = Model();
     blackhawk.LoadModel("Models/uh60.obj");
 
-    spaceship1 = Model();
-    spaceship1.LoadModel("Models/E-45-Aircraft/E 45 Aircraft_obj.obj");
+    //spaceship1 = Model();
+    //spaceship1.LoadModel("Models/E-45-Aircraft/E 45 Aircraft_obj.obj");
 
     /*mainLight = DirectionalLight(1.0f, 1.0f, 1.0f, 
                                  0.1f, 0.3f, 
                                  0.0f, 0.0f, -1.0f);*/
 
-    mainLight = DirectionalLight(2560, 2048,
+    mainLight = DirectionalLight(2048, 2048,
                                  1.0f, 1.0f, 1.0f,
-                                 0.1f, 0.3f,
-                                 0.0f, -15.0f, -10.0f);
+                                 0.0f, 0.0f,
+                                 0.0f, -15.0f, -10.0f
+                                );
 
-    
-
-    pointLights[0] = PointLight(0.0f, 0.0f, 1.0f,
-                                0.1f, 0.1f,
-                                0.0f, 0.0f, 0.0f,
-                                0.3f, 0.2f, 0.1f
+    pointLights[0] = PointLight(1024, 1024,
+                                0.1f, 100.0f,
+                                1.0f, 1.0f, 1.0f,
+                                0.0f, 0.4f,
+                                2.0f, 2.0f, 0.0f,
+                                0.3f, 0.01f, 0.01f
                                );
+                             
     pointLightCount++;
     
-    pointLights[1] = PointLight(0.0f, 1.0f, 0.0f,
-                                0.0f, 0.1f,
-                               -4.0f, 2.0f, 0.0f,
-                                0.3f, 0.1f, 0.1f);
+    pointLights[1] = PointLight(1024, 1024,
+                                0.1f, 100.0f,
+                                0.0f, 1.0f, 0.0f,
+                                0.0f, 0.4f,
+                                -2.0f, 2.0f, 0.0f,
+                                0.3f, 0.01f, 0.01f
+                               );
 
     pointLightCount++;
     
@@ -409,25 +455,31 @@ int main()
                               0.3f, 0.2f, 0.1f,
                               20.0f);*/
 
-    spotLights[0] = SpotLight(1.0f,  1.0f, 1.0f,
-                              0.0f,  2.0f,
-                              0.0f,  0.0f, 0.0f,
+    spotLights[0] = SpotLight(1024, 1024,
+                              0.1f, 100.0f,
+                              1.0f, 1.0f, 1.0f,
+                              0.0f, 2.0f,
+                              0.0f, 0.0f, 0.0f,
                               0.0f, -1.0f, 0.0f,
-                              1.0f,  0.0f, 0.0f,
-                              20.0f);
+                              1.0f, 0.0f, 0.0f,
+                              20.0f
+                             );
     spotLightCount++;
 
-    spotLights[1] = SpotLight(1.0f,   1.0f, 1.0f,
-                               0.0f,  1.0f,
-                               0.0f, -1.5f, 0.0f,
-                            -100.0f, -1.0f, 0.0f,
-                               1.0f,  0.0f, 0.0f,
-                              20.0f);
+    spotLights[1] = SpotLight(1024, 1024,
+                              0.1f, 100.0f,
+                              1.0f, 1.0f, 1.0f,
+                              0.0f, 1.0f,
+                              0.0f, -1.5f, 0.0f,
+                              -100.0f, -1.0f, 0.0f,
+                              1.0f, 0.0f, 0.0f,
+                              20.0f
+                             );
 
     spotLightCount++;
 
     // Create projection variable
-    glm::mat4 projection = glm::perspective(45.0f, (GLfloat) (mainWindow.getBufferWidth() / mainWindow.getBufferHeight()), 0.1f, 100.0f); // (y, aspect, near, far
+    glm::mat4 projection = glm::perspective(glm::radians(60.0f), (GLfloat) (mainWindow.getBufferWidth() / mainWindow.getBufferHeight()), 0.1f, 100.0f); // (y, aspect, near, far
 
     // Loop until window close
     while (!mainWindow.getShouldClose()) 
@@ -436,51 +488,36 @@ int main()
         deltaTime = now - lastTime;   // for SDL, (now - lasttime)*1000/SDL_GetPerformanceFrequency() 
         lastTime = now;
 
-        // Get & Handle user input events
+        // Get + Handle User Input
         glfwPollEvents();
-
-        if (direction) {
-            triOffset += triIncrement;
-        }
-        else {
-            triOffset -= triIncrement;
-        }
-
-        if (abs(triOffset) >= triMaxOffset) {
-            direction = !direction;
-        }
-
-        curAngle += 0.005f;
-
-        // Not necessay but good to do to ensure it is not to large after running for a while
-        if (curAngle >= 360) {
-            curAngle -= 360;
-        }
-
-        // if (sizeDirection) {
-        if (sizeDirection) {
-            curSize += 0.0001f;
-        }
-        else {
-            curSize -= 0.0001f;
-        }
-
-        if (curSize >= maxSize || curSize <= minSize) {
-            sizeDirection = !sizeDirection;
-        }
-
 
         // Managing key press
         camera.keyControl(mainWindow.getKeys(), deltaTime);
 
         // Managing Mouse Movement
         camera.mouseControl(mainWindow.getXChange(), mainWindow.getYChange());
+
+        if (mainWindow.getKeys()[GLFW_KEY_L])
+        {
+            spotLights[0].Toggle();
+            mainWindow.getKeys()[GLFW_KEY_L] = false;
+        }
                 
         DirectionalShadowMapPass(&mainLight);
 
-        RenderPass(camera.calculateViewMatrix(), projection);
+        for (size_t i = 0; i < pointLightCount; i++)
+        {
+            OmniShadowMapPass(&pointLights[i]);
+        }
+
+        for (size_t i = 0; i < spotLightCount; i++)
+        {
+            OmniShadowMapPass(&spotLights[i]);
+        }
+
+        RenderPass(projection, camera.calculateViewMatrix());
         
-        // glUseProgram(0);
+        glUseProgram(0);
 
         mainWindow.swapBuffers();
     }

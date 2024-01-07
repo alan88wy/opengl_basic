@@ -17,20 +17,20 @@ bool ShadowMap::Init(unsigned int width, unsigned int height)
 
     glBindTexture(GL_TEXTURE_2D, shadowMap);  // Bind Shadowmap to texture
     glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT, shadowWidth, shadowHeight, 0, GL_DEPTH_COMPONENT, GL_FLOAT, nullptr);
-    
-    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
 
-    float borderColour[] = {10.f, 1.0f, 1.0f, 1.0f};
+    float borderColour[] = { 10.f, 1.0f, 1.0f, 1.0f };
     glTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, borderColour); // Bi
 
-    glBindFramebuffer(GL_DRAW_FRAMEBUFFER, FBO);  // Bind FBO to Draw Framebuffer
+    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST); 
+
+    glBindFramebuffer(GL_FRAMEBUFFER, FBO);  // Bind FBO to Draw Framebuffer
 
     // Connect Framebuffer to texture
-    glFramebufferTexture2D(GL_DRAW_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, shadowMap, 0); 
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, shadowMap, 0); 
 
     glDrawBuffer(GL_NONE);  // None. We only need GL_DEPTH_ATTACHMENT
     glReadBuffer(GL_NONE);  //
