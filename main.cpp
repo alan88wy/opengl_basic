@@ -298,12 +298,12 @@ static void DirectionalShadowMapPass(DirectionalLight* light)
 
     glViewport(0, 0, light->GetShadowMap()->GetShadowWidth(), light->GetShadowMap()->GetShadowHeight());
 
-    light->GetShadowMap()->write();
+    light->GetShadowMap()->Write();
 
     glClear(GL_DEPTH_BUFFER_BIT);
 
     uniformModel = directionalShadowShader.GetModelLocation();
-    directionalShadowShader.SetDirectionalLightTransform(&(light->CalculateLightTransform()));
+    directionalShadowShader.SetDirectionalLightTransform(&light->CalculateLightTransform());
 
     directionalShadowShader.Validate();
 
@@ -321,12 +321,11 @@ static void OmniShadowMapPass(PointLight* light)
 
     // mainWindow.SetViewPort(0, 0, light->GetShadowMap()->GetShadowWidth(), light->GetShadowMap()->GetShadowHeight());
 
-
     uniformModel = omniShadowShader.GetModelLocation();
     uniformOmniLightPos = omniShadowShader.GetOmniLightPosLocation();
     uniformFarPlane = omniShadowShader.GetFarPlaneLocation();
 
-    light->GetShadowMap()->write();
+    light->GetShadowMap()->Write();
 
     glClear(GL_DEPTH_BUFFER_BIT);
 
@@ -371,7 +370,7 @@ static void RenderPass(glm::mat4 projectionMatrix, glm::mat4 viewMatrix)
 
     mainLight.GetShadowMap()->Read(GL_TEXTURE2);
 
-    shaderList[0].SetTecture(1);  // Default is 0. So, we really do not need to do this
+    shaderList[0].SetTexture(1);  // Default is 0. So, we really do not need to do this
     shaderList[0].SetDirectionalShadowMap(2);
  
     glm::vec3 lowerLight = camera.getCameraPosition();
@@ -426,11 +425,17 @@ int main()
                                  0.0f, -15.0f, -10.0f
                                 );
 
+   /* mainLight = DirectionalLight(2048, 2048,
+                                1.0f, 1.0f, 1.0f,
+                                0.1f, 0.3f,
+                                0.0f, 0.0f, -1.0f
+                                );*/
+
     pointLights[0] = PointLight(1024, 1024,
                                 0.1f, 100.0f,
-                                1.0f, 1.0f, 1.0f,
+                                0.0f, 1.0f, 0.0f,
                                 0.0f, 0.4f,
-                                2.0f, 2.0f, 0.0f,
+                                -2.0f, 2.0f, 0.0f,
                                 0.3f, 0.01f, 0.01f
                                );
                              
@@ -438,9 +443,9 @@ int main()
     
     pointLights[1] = PointLight(1024, 1024,
                                 0.1f, 100.0f,
-                                0.0f, 1.0f, 0.0f,
+                                0.0f, 0.0f, 1.0f,
                                 0.0f, 0.4f,
-                                -2.0f, 2.0f, 0.0f,
+                                2.0f, 2.0f, 0.0f,
                                 0.3f, 0.01f, 0.01f
                                );
 
@@ -464,6 +469,7 @@ int main()
                               1.0f, 0.0f, 0.0f,
                               20.0f
                              );
+
     spotLightCount++;
 
     spotLights[1] = SpotLight(1024, 1024,
@@ -479,7 +485,7 @@ int main()
     spotLightCount++;
 
     // Create projection variable
-    glm::mat4 projection = glm::perspective(glm::radians(60.0f), (GLfloat) (mainWindow.getBufferWidth() / mainWindow.getBufferHeight()), 0.1f, 100.0f); // (y, aspect, near, far
+    glm::mat4 projection = glm::perspective(glm::radians(60.0f), (GLfloat)mainWindow.getBufferWidth() / mainWindow.getBufferHeight(), 0.1f, 100.0f); // (y, aspect, near, far
 
     // Loop until window close
     while (!mainWindow.getShouldClose()) 

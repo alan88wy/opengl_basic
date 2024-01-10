@@ -12,7 +12,7 @@ class SpotLight : public PointLight
             GLfloat red, GLfloat green, GLfloat blue,
             GLfloat aIntensity, GLfloat dIntensity, 
             GLfloat xPos, GLfloat yPos, GLfloat zPos,
-            GLfloat xDirection, GLfloat yDirection, GLfloat zDirection,
+            GLfloat xDir, GLfloat yDir, GLfloat zDir,
             GLfloat con, GLfloat lin, GLfloat exp, GLfloat edg);
 
         void UseLight(GLuint ambientIntensityLocation, GLuint ambientColourLocation,

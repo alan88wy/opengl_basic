@@ -44,7 +44,7 @@ class Shader
 		void SetDirectionalLight(DirectionalLight * dLight)  const;
 		void SetPointLights(PointLight * pLight, unsigned int lightCount, unsigned int textureUnit, unsigned int offset);
 		void SetSpotLights(SpotLight* sLight, unsigned int lightCount, unsigned int textureUnit, unsigned int offset);
-		void SetTecture(GLuint textureUnit);
+		void SetTexture(GLuint textureUnit);
 		void SetDirectionalShadowMap(GLuint textureUnit);
 		void SetDirectionalLightTransform(glm::mat4* lTransform);
 		void SetLightMatrices(std::vector<glm::mat4> lightMatrices);

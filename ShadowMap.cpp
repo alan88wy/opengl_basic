@@ -6,7 +6,7 @@ ShadowMap::ShadowMap()
     shadowMap = 0;
 }
 
-bool ShadowMap::Init(unsigned int width, unsigned int height)
+bool ShadowMap::Init(GLuint width, GLuint height)
 {
     shadowWidth = width;
     shadowHeight = height;
@@ -21,7 +21,7 @@ bool ShadowMap::Init(unsigned int width, unsigned int height)
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
 
-    float borderColour[] = { 10.f, 1.0f, 1.0f, 1.0f };
+    float borderColour[] = { 1.0f, 1.0f, 1.0f, 1.0f };
     glTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, borderColour); // Bi
 
     glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
@@ -48,9 +48,9 @@ bool ShadowMap::Init(unsigned int width, unsigned int height)
     return true;
 }
 
-void ShadowMap::write()
+void ShadowMap::Write()
 {
-    glBindFramebuffer(GL_DRAW_FRAMEBUFFER, FBO); // Bind to defined frame buffer
+    glBindFramebuffer(GL_FRAMEBUFFER, FBO); // Bind to defined frame buffer
 }
 
 void ShadowMap::Read(GLenum textureUnit)

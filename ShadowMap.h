@@ -9,9 +9,9 @@ class ShadowMap
     public:
         ShadowMap();
 
-        virtual bool Init(unsigned int width, unsigned int height);
+        virtual bool Init(GLuint width, GLuint height);
 
-        virtual void write();
+        virtual void Write();
 
         virtual void Read(GLenum textureUnit);
 

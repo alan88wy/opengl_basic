@@ -26,7 +26,8 @@ Window::Window(GLint windowWidth, GLint windowHeight)
 
 	// mouseFirstMoved = true;
 
-	for (size_t i = 0; i < 1024; i++) {
+	for (size_t i = 0; i < 1024; i++) 
+	{
 		keys[i] = 0;  // false;
 	}
 
@@ -156,10 +157,10 @@ void Window::handleMouse(GLFWwindow* window, double xPos, double yPos)
 	theWindow->lastY = yPos;
 }
 
-//void Window::SetViewPort(GLuint x, GLuint y, GLuint width, GLuint height)
-//{
-//	glViewport(x, y, width, height);
-//}
+void Window::SetViewPort(GLuint x, GLuint y, GLuint width, GLuint height)
+{
+	glViewport(x, y, width, height);
+}
 
 Window::~Window()
 {

@@ -3,6 +3,7 @@
 DirectionalLight::DirectionalLight() : Light()
 {
     direction = glm::vec3(0.0f, -1.0f, 0.0f);
+    lightProj = glm::ortho(-5.0f, 5.0f, -5.0f, 5.0f, 0.1f, 20.0f);
 }
 
 DirectionalLight::DirectionalLight(GLuint shadowWidth, GLuint shadowHeight,
@@ -15,8 +16,8 @@ DirectionalLight::DirectionalLight(GLuint shadowWidth, GLuint shadowHeight,
     lightProj = glm::ortho(-20.0f, 20.0f, -20.0f, 20.0f, 0.1f, 100.0f); // Light projection for shadow
 }
 
-void DirectionalLight::useLight(GLuint ambientIntensityLocation, GLuint ambientColourLocation,
-    GLuint diffuseIntensityLocation, GLuint directionLocation)
+void DirectionalLight::UseLight(GLuint ambientIntensityLocation, GLuint ambientColourLocation,
+                                GLuint diffuseIntensityLocation, GLuint directionLocation)
 {
     glUniform3f(ambientColourLocation, colour.x, colour.y, colour.z);
     glUniform1f(ambientIntensityLocation, ambientIntensity);
