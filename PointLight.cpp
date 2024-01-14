@@ -10,13 +10,13 @@ PointLight::PointLight() : Light()
 	exponent = 0.0f;
 }
 
-PointLight::PointLight( GLuint shadowWidth, GLuint shadowHeight,
-						GLfloat near, GLfloat far,
-						GLfloat red, GLfloat green, GLfloat blue,
-						GLfloat aIntensity, GLfloat dIntensity,
-						GLfloat xPos, GLfloat yPos, GLfloat zPos,
-						GLfloat con, GLfloat lin, GLfloat exp) : 
-						Light(shadowWidth, shadowHeight, red, green, blue, aIntensity, dIntensity)
+PointLight::PointLight(GLuint shadowWidth, GLuint shadowHeight,
+				  	   GLfloat near, GLfloat far,
+					   GLfloat red, GLfloat green, GLfloat blue,
+					   GLfloat aIntensity, GLfloat dIntensity,
+					   GLfloat xPos, GLfloat yPos, GLfloat zPos,
+					   GLfloat con, GLfloat lin, GLfloat exp) : 
+				   	   Light(shadowWidth, shadowHeight, red, green, blue, aIntensity, dIntensity)
 {
 	position = glm::vec3(xPos, yPos, zPos);
 	constant = con;
@@ -32,12 +32,13 @@ PointLight::PointLight( GLuint shadowWidth, GLuint shadowHeight,
 
 	shadowMap->Init(shadowWidth, shadowHeight);
 
-
 }
 
 std::vector<glm::mat4> PointLight::CalculateLightTransform()
 {
 	std::vector<glm::mat4> lightMatrices;
+
+	// Ordering is important here as it will be use in the same order in Omni Shadow Shader
 
 	// +x, -x
 	lightMatrices.push_back(lightProj * glm::lookAt(position, position + glm::vec3(1.0, 0.0, 0.0), glm::vec3(0.0, -1.0, 0.0)));

@@ -19,6 +19,7 @@ SpotLight::SpotLight(GLuint shadowWidth, GLuint shadowHeight,
 {
     direction = normalize(glm::vec3(xDir, yDir, zDir));
     edge = edg;
+    isOn = true;
     procEdge = cosf(glm::radians(edge));
 }
 

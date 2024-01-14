@@ -7,9 +7,9 @@ uniform float farPlane;
 
 void main()
 {
-	float distance = length(FragPos.xyz - lightPos);
+	float distance = length(FragPos.xyz - lightPos);  // Distance between fragment and light
 
-	distance = distance / farPlane;
+	distance = distance / farPlane;  // calculate how far it is from farPlane (between 0-1 range). Normalize by doing this.
 
-	gl_FragDepth = distance;
+	gl_FragDepth = distance;  // Set fragment depth. Override default value
 }

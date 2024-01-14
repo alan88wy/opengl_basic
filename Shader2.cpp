@@ -288,7 +288,7 @@ GLuint Shader::GetFarPlaneLocation() const
 void Shader::SetDirectionalLight(DirectionalLight * dLight) const
 {
 	dLight->UseLight(uniformDirectionalLight.uniformAmbientIntensity, uniformDirectionalLight.uniformColour,
-		             uniformDirectionalLight.uniformDiffuseIntensity, uniformDirectionalLight.uniformDirection);
+					 uniformDirectionalLight.uniformDiffuseIntensity, uniformDirectionalLight.uniformDirection);
 }
 
 void Shader::SetPointLights(PointLight * pLight, unsigned int lightCount, unsigned int textureUnit, unsigned int offset)
