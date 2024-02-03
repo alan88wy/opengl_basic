@@ -47,7 +47,7 @@ Texture brickTexture;
 Texture dirtTexture;
 Texture plainTexture;
 
-Material shinnyMaterial;
+Material shinyMaterial;
 Material dullMaterial;
 
 Model xwing;
@@ -160,11 +160,13 @@ static void CreateObjects()
         1, 2, 3
     };
 
+    // Changed 10.0f to 20.0f
+
     GLfloat floorVertices[] = {
-        -10.0f, 0.0f, -10.0f,	0.0f, 0.0f,		0.0f, -1.0f, 0.0f,
-        10.0f, 0.0f, -10.0f,	10.0f, 0.0f,	0.0f, -1.0f, 0.0f,
-        -10.0f, 0.0f, 10.0f,	0.0f, 10.0f,	0.0f, -1.0f, 0.0f,
-        10.0f, 0.0f, 10.0f,		10.0f, 10.0f,	0.0f, -1.0f, 0.0f
+        -20.0f, 0.0f, -20.0f,	0.0f, 0.0f,		0.0f, -1.0f, 0.0f,
+        20.0f, 0.0f, -20.0f,	20.0f, 0.0f,	0.0f, -1.0f, 0.0f,
+        -20.0f, 0.0f, 20.0f,	0.0f, 20.0f,	0.0f, -1.0f, 0.0f,
+        20.0f, 0.0f, 20.0f,		20.0f, 20.0f,	0.0f, -1.0f, 0.0f
     };
 
     calcAverageNormals(indices, 12, vertices, 32, 8, 5);
@@ -220,7 +222,7 @@ static void RenderScene()
 
     brickTexture.UseTexture();
 
-    shinnyMaterial.UseMaterial(uniformSpecularIntensity, uniformShininess);
+    shinyMaterial.UseMaterial(uniformSpecularIntensity, uniformShininess);
 
     meshList[0]->RenderMesh();
 
@@ -244,7 +246,7 @@ static void RenderScene()
 
     dirtTexture.UseTexture();
     // plainTexture.UseTexture();
-    shinnyMaterial.UseMaterial(uniformSpecularIntensity, uniformShininess);
+    shinyMaterial.UseMaterial(uniformSpecularIntensity, uniformShininess);
     meshList[2]->RenderMesh();
 
     blackhawkAngle += 0.1f;
@@ -258,13 +260,20 @@ static void RenderScene()
     model = glm::rotate(model, -blackhawkAngle * toRadians, glm::vec3(0.0f, 1.0f, 0.0f));
     // model = glm::translate(model, glm::vec3(-7.0f, 0.0f, 10.0f));
     // model = glm::translate(model, glm::vec3(-7.0f, 0.0f, 2.0f));
-    model = glm::translate(model, glm::vec3(-7.0f, 0.0f, 2.0f));
+    model = glm::translate(model, glm::vec3(-7.0f, 0.0f, 3.0f));
     // model = glm::rotate(model, -20.0f * toRadians, glm::vec3(0.0f, 0.0f, 1.0f));
     // model = glm::rotate(model, -90.0f * toRadians, glm::vec3(1.0f, 0.0f, 0.0f));
     // model = glm::rotate(model, curAngle * toRadians, glm::vec3(1.0f, 0.0f, 0.0f)); // Rotate along y axis
     model = glm::scale(model, glm::vec3(0.006f, 0.006f, 0.006f));
     glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
-    shinnyMaterial.UseMaterial(uniformSpecularIntensity, uniformShininess);
+    shinyMaterial.UseMaterial(uniformSpecularIntensity, uniformShininess);
+    xwing.RenderModel();
+
+    model = glm::mat4(1.0f);
+    model = glm::translate(model, glm::vec3(-7.0f, 0.0f, 10.0f));
+    model = glm::scale(model, glm::vec3(0.006f, 0.006f, 0.006f));
+    glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
+    shinyMaterial.UseMaterial(uniformSpecularIntensity, uniformShininess);
     xwing.RenderModel();
 
     //model = glm::mat4(1.0f);
@@ -274,7 +283,7 @@ static void RenderScene()
     // model = glm::rotate(model, curAngle * toRadians, glm::vec3(1.0f, 0.0f, 0.0f)); // Rotate along y axis
     //model = glm::scale(model, glm::vec3(0.4f, 0.4f, 0.4f));
     //glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
-    //shinnyMaterial.UseMaterial(uniformSpecularIntensity, uniformShininess);
+    //shinyMaterial.UseMaterial(uniformSpecularIntensity, uniformShininess);
     //spaceship1.RenderModel();
 
     model = glm::mat4(1.0f);
@@ -285,7 +294,7 @@ static void RenderScene()
     model = glm::scale(model, glm::vec3(0.4f, 0.4f, 0.4f));
 
     glUniformMatrix4fv(uniformModel, 1, GL_FALSE, glm::value_ptr(model));
-    shinnyMaterial.UseMaterial(uniformSpecularIntensity, uniformShininess);
+    shinyMaterial.UseMaterial(uniformSpecularIntensity, uniformShininess);
     blackhawk.RenderModel();
 
 }
@@ -403,7 +412,7 @@ int main()
     plainTexture = Texture("Textures/plain.png");
     plainTexture.LoadTextureA();
 
-    shinnyMaterial = Material(4.0f, 256);
+    shinyMaterial = Material(4.0f, 256);
     dullMaterial = Material(0.3f, 4);
 
     xwing = Model();
@@ -482,7 +491,7 @@ int main()
                               20.0f
                              );
 
-    spotLightCount++;
+    //spotLightCount++;
 
     // Create projection variable
     glm::mat4 projection = glm::perspective(glm::radians(60.0f), (GLfloat)mainWindow.getBufferWidth() / mainWindow.getBufferHeight(), 0.1f, 100.0f); // (y, aspect, near, far
