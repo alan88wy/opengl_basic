@@ -154,6 +154,7 @@
     <ClCompile Include="PointLight.cpp" />
     <ClCompile Include="Shader.cpp" />
     <ClCompile Include="ShadowMap.cpp" />
+    <ClCompile Include="Skybox.cpp" />
     <ClCompile Include="SpotLight.cpp" />
     <ClCompile Include="Texture.cpp" />
     <ClCompile Include="Window.cpp" />
@@ -170,6 +171,7 @@
     <ClInclude Include="PointLight.h" />
     <ClInclude Include="Shader.h" />
     <ClInclude Include="ShadowMap.h" />
+    <ClInclude Include="Skybox.h" />
     <ClInclude Include="SpotLight.h" />
     <ClInclude Include="Texture.h" />
     <ClInclude Include="Window.h" />
@@ -182,11 +184,19 @@
     <None Include="Shaders\omni_directional_shadow_map.vert" />
     <None Include="Shaders\shader.frag" />
     <None Include="Shaders\shader.vert" />
+    <None Include="skybox.frag" />
+    <None Include="skybox.vert" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="Textures\brick.png" />
     <Image Include="Textures\dirt.png" />
     <Image Include="Textures\plain.png" />
+    <Image Include="Textures\Skybox\cupertin-lake_bk.tga" />
+    <Image Include="Textures\Skybox\cupertin-lake_dn.tga" />
+    <Image Include="Textures\Skybox\cupertin-lake_ft.tga" />
+    <Image Include="Textures\Skybox\cupertin-lake_lf.tga" />
+    <Image Include="Textures\Skybox\cupertin-lake_rt.tga" />
+    <Image Include="Textures\Skybox\cupertin-lake_up.tga" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

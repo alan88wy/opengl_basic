@@ -26,6 +26,7 @@
 #include "SpotLight.h"
 #include "Model.h"
 #include "ShadowMap.h"
+#include "Skybox.h"
 
 const float toRadians = 3.14159265f / 180.0f; // M_PI
 
@@ -61,6 +62,7 @@ GLfloat blackhawkAngle = 0.0f;
 DirectionalLight mainLight;
 PointLight pointLights[MAX_POINT_LIGHTS];
 SpotLight spotLights[MAX_SPOT_LIGHTS];
+Skybox skybox;
 
 unsigned int pointLightCount = 0;
 unsigned int spotLightCount = 0;
@@ -88,6 +90,8 @@ static const char* vOmniShadowFrag = "Shaders/omni_directional_shadow_map.frag";
 
 // Omni Directional shadow Geometry shader
 static const char* vOmniGeoShader = "Shaders/omni_directional_shadow_map.geom";
+
+
 
 static void calcAverageNormals(unsigned int* indices, unsigned int indiceCount,
                                GLfloat* vertices, unsigned int verticeCount, 
@@ -163,10 +167,10 @@ static void CreateObjects()
     // Changed 10.0f to 20.0f
 
     GLfloat floorVertices[] = {
-        -20.0f, 0.0f, -20.0f,	 0.0f,  0.0f,	0.0f, -1.0f, 0.0f,
-         20.0f, 0.0f, -20.0f,	20.0f,  0.0f,	0.0f, -1.0f, 0.0f,
-        -20.0f, 0.0f,  20.0f,	 0.0f, 20.0f,	0.0f, -1.0f, 0.0f,
-         20.0f, 0.0f,  20.0f,	20.0f, 20.0f,	0.0f, -1.0f, 0.0f
+        -10.0f, 0.0f, -10.0f,	 0.0f,  0.0f,	0.0f, -1.0f, 0.0f,
+         10.0f, 0.0f, -10.0f,	10.0f,  0.0f,	0.0f, -1.0f, 0.0f,
+        -10.0f, 0.0f,  10.0f,	 0.0f, 10.0f,	0.0f, -1.0f, 0.0f,
+         10.0f, 0.0f,  10.0f,	10.0f, 10.0f,	0.0f, -1.0f, 0.0f
     };
 
     calcAverageNormals(indices, 12, vertices, 32, 8, 5);
@@ -238,6 +242,8 @@ static void RenderScene()
     dullMaterial.UseMaterial(uniformSpecularIntensity, uniformShininess);
 
     meshList[1]->RenderMesh();
+
+    // floor
 
     model = glm::mat4(1.0f);
     model = glm::translate(model, glm::vec3(0.0f, -2.0f, 0.0f));
@@ -352,6 +358,15 @@ static void OmniShadowMapPass(PointLight* light)
 
 static void RenderPass(glm::mat4 projectionMatrix, glm::mat4 viewMatrix)
 {
+    // mainWindow.SetViewPort(0, 0, 2560, 2048);
+    glViewport(0, 0, 2560, 2048);
+
+    // clear window
+    glClearColor(0.0f, 0.0f, 0.0f, 1.0f);  // no divide by 256. RGB Color (r, g, b) plus transparancy
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);  // Clear all colors;
+
+    skybox.DrawSkyBox(viewMatrix, projectionMatrix);
+
     shaderList[0].UseShader();
 
     uniformModel = shaderList[0].GetModelLocation();
@@ -361,12 +376,7 @@ static void RenderPass(glm::mat4 projectionMatrix, glm::mat4 viewMatrix)
     uniformSpecularIntensity = shaderList[0].GetSpecularIntensityLocation();
     uniformShininess = shaderList[0].GetShininessLocation();
 
-    // mainWindow.SetViewPort(0, 0, 2560, 2048);
-    glViewport(0, 0, 2560, 2048);
 
-    // clear window
-    glClearColor(0.0f, 0.0f, 0.0f, 1.0f);  // no divide by 256. RGB Color (r, g, b) plus transparancy
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);  // Clear all colors;
 
     glUniformMatrix4fv(uniformProjection, 1, GL_FALSE, glm::value_ptr(projectionMatrix));
     glUniformMatrix4fv(uniformView, 1, GL_FALSE, glm::value_ptr(viewMatrix));
@@ -429,9 +439,9 @@ int main()
                                  0.0f, 0.0f, -1.0f);*/
 
     mainLight = DirectionalLight(2048, 2048,
-                                 1.0f, 1.0f, 1.0f,
-                                 0.0f, 0.0f,
-                                 0.0f, -15.0f, -10.0f
+                                  1.0f,   0.53f,  0.3f,
+                                  0.1f,   0.9f,
+                                -10.0f, -12.0f,  18.5f
                                 );
 
    /* mainLight = DirectionalLight(2048, 2048,
@@ -441,21 +451,21 @@ int main()
                                 );*/
 
     pointLights[0] = PointLight(1024, 1024,
-                                0.1f, 100.0f,
-                                0.0f, 1.0f, 0.0f,
-                                0.0f, 0.4f,
-                                -2.0f, 2.0f, 0.0f,
-                                0.3f, 0.01f, 0.01f
+                                0.01f, 100.0f,
+                                0.0f, 0.0f, 1.0f,
+                                0.0f, 1.0f,
+                                1.0f, 2.0f, 0.0f,
+                                0.3f, 0.2f, 0.1f
                                );
                              
     pointLightCount++;
     
     pointLights[1] = PointLight(1024, 1024,
-                                0.1f, 100.0f,
-                                0.0f, 0.0f, 1.0f,
-                                0.0f, 0.4f,
-                                2.0f, 2.0f, 0.0f,
-                                0.3f, 0.01f, 0.01f
+                                0.01f, 100.0f,
+                                0.0f, 1.0f, 0.0f,
+                                0.0f, 1.0f,
+                                -4.0f, 3.0f, 0.0f,
+                                0.3f, 0.2f, 0.1f
                                );
 
     pointLightCount++;
@@ -491,7 +501,18 @@ int main()
                               20.0f
                              );
 
-    //spotLightCount++;
+    spotLightCount++;
+
+    std::vector<std::string> skyboxFaces;
+
+    skyboxFaces.push_back("Textures/skybox/cupertin-lake_rt.tga");
+    skyboxFaces.push_back("Textures/skybox/cupertin-lake_lf.tga");
+    skyboxFaces.push_back("Textures/skybox/cupertin-lake_up.tga");
+    skyboxFaces.push_back("Textures/skybox/cupertin-lake_dn.tga");
+    skyboxFaces.push_back("Textures/skybox/cupertin-lake_bk.tga");
+    skyboxFaces.push_back("Textures/skybox/cupertin-lake_ft.tga");
+
+    skybox = Skybox(skyboxFaces);
 
     // Create projection variable
     glm::mat4 projection = glm::perspective(glm::radians(60.0f), (GLfloat)mainWindow.getBufferWidth() / mainWindow.getBufferHeight(), 0.1f, 100.0f); // (y, aspect, near, far
